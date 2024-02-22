@@ -24,7 +24,7 @@ router.post("/login", async (req, res) => {
           .json({ message: "Wrong Password", error: true });
    
     const payload = {
-      id: user._id,
+      id: user.userId,
       groups: user.group
     };
     
