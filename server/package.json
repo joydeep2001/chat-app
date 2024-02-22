@@ -10,6 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.10",
+    "dot-env": "^0.0.1",
     "express": "^4.18.2",
     "i": "^0.3.7",
     "jsonwebtoken": "^9.0.2",
@@ -18,6 +22,7 @@
     "websocket": "^1.0.34"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "dotenv": "^16.4.5"
   }
 }

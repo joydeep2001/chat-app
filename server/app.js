@@ -1,1 +1,31 @@
-console.log("hello world!!");
+const express = require("express");
+const app = express();
+const mongoose = require("mongoose");
+const cookieparser = require("cookie-parser");
+const dotenv = require("dotenv");
+const auth = require("./routes/auth");
+
+
+dotenv.config();
+const cors = require("cors");
+app.use(cors({ origin: ["http://localhost:3000"], credentials: true }));
+
+mongoose.connect(process.env.DB_CONNECT, { useNewUrlParser: true });
+const connect = mongoose.connection;
+connect.on("open", () => {
+  console.log("conneted to Database");
+});
+
+app.use(cookieparser());
+app.use(express.json());
+
+let PORT = process.env.PORT || 3005;
+
+
+app.use("/api/v1/auth", auth);
+
+
+app.listen(PORT, () => {
+    console.log(`Server is Running ${PORT}`);
+});
+
