@@ -8,7 +8,7 @@ router.get('/',async(req,res)=>{
     try {
         const userId = jwt.verify(cookie,process.env.ACCESS_TOKEN_SECRET).id; 
         console.log(userId);
-        const user = await User.findOne({_id:userId});
+        const user = await User.findOne({userId});
         const contacts = user.contact
         const groups = user.group
 
