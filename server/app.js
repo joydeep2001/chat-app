@@ -3,9 +3,7 @@ const app = express();
 const mongoose = require("mongoose");
 const cookieparser = require("cookie-parser");
 const dotenv = require("dotenv");
-const groupSchema = require("./models/group");
-const user = require("./models/user");
-const message = require("./models/message");
+const auth = require("./routes/auth");
 
 
 dotenv.config();
@@ -24,7 +22,10 @@ app.use(express.json());
 let PORT = process.env.PORT || 3005;
 
 
+app.use("/api/v1/auth", auth);
+
+
 app.listen(PORT, () => {
     console.log(`Server is Running ${PORT}`);
-  });
+});
 
