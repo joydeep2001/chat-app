@@ -19,6 +19,9 @@ const usrSchema = mongoose.Schema({
     },
     group:{
         type:[String],
+    },
+    contact:{
+        type:[String]
     }
 })
 
