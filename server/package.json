@@ -20,6 +20,7 @@
     "websocket": "^1.0.34"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "dotenv": "^16.4.5"
   }
 }
