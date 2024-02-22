@@ -10,11 +10,11 @@ const usrSchema = mongoose.Schema({
         required:true,
     },
     password:{
-        type:String,
+        type: String,
         required:true
     },
     email:{
-        type:email,
+        type: String,
         required:true,
     },
     group:{
