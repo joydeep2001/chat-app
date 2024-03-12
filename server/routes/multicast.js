@@ -2,7 +2,8 @@ const router = require('express').Router();
 
 const User = require('../models/user');
 const Group = require('../models/group')
-const message = require('../models/message')
+const Message = require('../models/message')
+const jwt = require('jsonwebtoken')
 
 router.get('/:group_id',async(req,res)=>{
     const group_id = req.query.group_id // token 
@@ -33,4 +34,42 @@ router.get('/:group_id',async(req,res)=>{
         res.status(400).json({})
     }
 })
+
+router.post("/:group_id",async(req,res)=>{
+    const group_id=req.query.group_id;
+    try {
+        const content = req.body.content;
+        const type = req.body.type;
+        const cookie = req.cookies["auth-token"]
+        const sender_id = jwt.verify(cookie,process.env.ACCESS_TOKEN_SECRET).id;
+        let url=null, message=null;
+        let m_type=null;
+        if(type==="text"){
+            message = content;
+            m_type=type
+        }else{
+            url = content;
+            m_type=type
+        }
+        const message_entry = new Message({
+            sender:sender_id,
+            message_type:m_type,
+            content:content,
+            url:url,
+            group_id:group_id,
+            reciver_id:null
+        })
+        const savedMessage = await message_entry.save()
+
+        const memeber = Group.findOne(group_id).members
+        //
+
+        //
+
+
+    } catch (err) {
+        
+    }
+})
+
 module.exports=router
