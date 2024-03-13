@@ -16,6 +16,8 @@ const message = require("./models/message");
 const chat = require('./routes/chat')
 const multicast = require('./routes/multicast')
 const unicast = require('./routes/unicast')
+const groupCreate = require('./routes/createGroup')
+
 
 
 
@@ -45,6 +47,7 @@ app.use("/api/v1/auth", auth);
 app.use('/api/v1/chat',chat);
 app.use('/api/v1/multicast',multicast);
 app.use('/api/v1/unicast',unicast);
+app.use('/api/v1/group-create',groupCreate);
 
 
 
