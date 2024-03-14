@@ -52,12 +52,12 @@ class WebSocketManager {
   }
 
   async unicast(reciver_id, m_type, sender_id, content) {
-    const contacts = await Contact.findOne({userId:userId.id})
-    let contactslist = contacts.contacts;
-    if(contactslist.indexOf(reciver_id)!=-1)
-    {
-      contactslist.push(reciver_id)
-    }
+    // const contacts = await Contact.findOne({userId:userId.id})
+    // let contactslist = contacts.contacts;
+    // if(contactslist.indexOf(reciver_id)!=-1)
+    // {
+    //   contactslist.push(reciver_id)
+    // }
     let message = null;
     let url = null;
     if (m_type === "text") {
