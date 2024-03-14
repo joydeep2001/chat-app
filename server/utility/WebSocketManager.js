@@ -23,8 +23,7 @@ class WebSocketManager {
         userId = jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET);
       } catch (err) {
         console.log(err);
-        return resizeBy.status(403).send("Invalid token!!");
-      }
+        }
 
       this.connections.set(userId.id, connection);
       console.log(`${userId.id}: connected`);
