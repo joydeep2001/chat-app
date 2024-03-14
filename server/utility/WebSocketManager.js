@@ -1,6 +1,7 @@
 const { json } = require("express");
 const Message = require("../models/message");
 const Group = require("../models/group")
+const Contact = require("../models/contact")
 
 const WebSocketServer = require("websocket").server;
 const jwt = require("jsonwebtoken");
@@ -20,6 +21,8 @@ class WebSocketManager {
       const userId = jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET);
       this.connections.set(userId.id, connection);
       console.log(`${userId.id}: connected`);
+
+      
 
       connection.on("close", () => {
         console.log("Connection closed..");
@@ -49,6 +52,12 @@ class WebSocketManager {
   }
 
   async unicast(reciver_id, m_type, sender_id, content) {
+    const contacts = await Contact.findOne({userId:userId.id})
+    let contactslist = contacts.contacts;
+    if(contactslist.indexOf(reciver_id)!=-1)
+    {
+      contactslist.push(reciver_id)
+    }
     let message = null;
     let url = null;
     if (m_type === "text") {
@@ -84,6 +93,13 @@ class WebSocketManager {
       message = content;
     } else {
       url = content;
+    }
+
+    const contacts = await Contact.findOne({userId:userId.id})
+    let contactslist = contacts.contacts;
+    if(contactslist.indexOf(reciver_id)!=-1)
+    {
+       contactslist.push(reciver_id)
     }
     const message_entry = new Message({
       sender: sender_id,
