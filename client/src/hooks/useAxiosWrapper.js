@@ -11,10 +11,10 @@ export default function useAxiosWrapper() {
         setData({ ...response.data, success: true });
       })
       .catch((error) => {
-        console.log(error.response.data.message);
+        console.log(error?.response?.data.message);
         switch (error.code) {
           case "ERR_BAD_REQUEST":
-            alert(error.response.data.message);
+            alert(error.response?.data?.message);
             break;
           default:
             alert("Something went wrong! check console.");
