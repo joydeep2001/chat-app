@@ -55,11 +55,13 @@ import { AiOutlineLogout } from "react-icons/ai";
 //     timestamp: 1710404168857,
 //   },
 // ];
+const api_data = [];
+
 export default function ChatPage() {
   const [chats, setChats] = useState(new Map());
   const [selectedChat, setSelectedChat] = useState(null);
   const {appState: {userId}, dispatch} = useContext(AppContext);
-  const {data: api_data, fetchData} = useAxiosWrapper();
+  const {data: api_data, fetchData: getMessages} = useAxiosWrapper();
   const {data, fetchData: callLogout} = useAxiosWrapper();
 
   function onSelectedChatChange(sender_id) {
@@ -77,12 +79,21 @@ export default function ChatPage() {
   }, [data]);
 
   useEffect(() => {
+    getMessages("/messages", {
+        method: "GET"
+    })
+  }, [])
+
+  useEffect(() => {
+    if(!api_data) return;
+    console.log("api data", api_data);
+
     const tempChat = new Map();
     console.log("user id: "+ userId)
     //sorting in decending order wtr timestamp of a message
-    api_data?.sort((a, b) => b.timestamp - a.timestamp);
+    api_data[0].sort((a, b) => b.timestamp - a.timestamp);
 
-    api_data?.forEach((message) => {
+    api_data[0].forEach((message) => {
       
       let key = message.sender;
       if(message.group_id !== null) {
