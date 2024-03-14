@@ -11,17 +11,13 @@ router.get("/", async (req, res) => {
         const authToken = req.cookies["auth-token"];
         const sender_id = jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET).id;
         const receiver_id = req.query.receiver_id;
-        const groups=  jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET).groups;
-        
-        let old_messages_all = []
-        let old_messages_person = await Message.find({$or:[{sender:sender_id},{receiver: receiver_id }]})
-        old_messages_all.push(old_messages_person)
-        for(let i = 0 ; i<groups.len();i+=1)
-        {
-            let old_messages_group = await Message.find({group_id:groups[i]});
-            old_messages_all.push(old_messages_group)
-        }
-        res.status(200).json({message:old_messages_all})
+        const groups_ids=  jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET).groups;
+        //let group_ids = groups.map(group => group._id);
+        let old_messages = await Message.find({$or: [{sender: sender_id}, {receiver: receiver_id},{group_id: { $in: group_ids }}]});
+        // Fetch messages for all groups using $in operator
+        // let old_messages_group = await Message.find({  });
+        // old_messages_all.push(old_messages_group);
+        res.status(200).json({message:old_messages})
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
