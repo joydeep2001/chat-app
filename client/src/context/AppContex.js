@@ -2,9 +2,9 @@ import { createContext, useReducer, useEffect } from "react";
 import useAxiosWrapper from "../hooks/useAxiosWrapper";
 
 const initialAppState = {
-  loginState: false,
+  loginStatus: false,
   loading: true,
-  userId: null
+  userId: null,
 };
 export const AppContext = createContext(initialAppState);
 
@@ -15,7 +15,7 @@ const reducer = (state, action) => {
     case "LOADING_STATUS":
       return { ...state, loading: action.value };
     case "UID":
-        return {...state, userId: action.value}
+      return { ...state, userId: action.value };
     default:
       return state;
   }
@@ -23,10 +23,7 @@ const reducer = (state, action) => {
 
 export default function AppContextProvider({ children }) {
   const [appState, dispatch] = useReducer(reducer, initialAppState);
-  const {
-    data,
-    fetchData,
-  } = useAxiosWrapper();
+  const { data, fetchData } = useAxiosWrapper();
 
   /*This useEffect will get the status of login state*/
   useEffect(
@@ -38,14 +35,12 @@ export default function AppContextProvider({ children }) {
   );
   /*After the login state is fetched this will update the login state in appstate and make the loding false*/
   useEffect(() => {
-    dispatch({ type: "LOGIN_STATUS", value: data.loginStatus });
-    dispatch({ type: "UID", value: data.user_id });
-    if(Object.prototype.hasOwnProperty.call(data, "loginStatus")) 
-        dispatch({ type: "LOADING_STATUS", value: false });
-    
-    
+    dispatch({ type: "LOGIN_STATUS", value: data?.loginStatus });
+    dispatch({ type: "UID", value: data?.user_id });
+    if (data && Object.prototype.hasOwnProperty.call(data, "loginStatus"))
+      dispatch({ type: "LOADING_STATUS", value: false });
   }, [data]);
-  
+
   return (
     <AppContext.Provider value={{ appState, dispatch }}>
       {appState.loading ? <h2>Loading...</h2> : children}

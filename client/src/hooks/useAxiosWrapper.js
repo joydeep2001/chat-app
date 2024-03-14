@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 export default function useAxiosWrapper() {
-  const [data, setData] = useState({});
+  const [data, setData] = useState(null);
   useEffect(() => console.log(data), [data])
   function fetchData(endpoint, config) {
     const url = "http://localhost:3005/api/v1" + endpoint;

@@ -5,12 +5,44 @@ header {
   padding: 10px;
   position: sticky;
   top: 0;
+  display: flex;
+  justify-content: space-between;
 }
 h2 {
   margin: 0;
 }
 h3 {
   text-align: center;
+}
+.tool-box {
+    display: flex;
+    flex-wrap: wrap;
+    width: 350px;
+    justify-content: space-around;
+    align-items: center;
+}
+.btn-add-contacts {
+    height: 30px;
+    width: 120px;
+    margin-left: 2px;
+}
+.btn-logout {
+    height: 30px;
+    background-color: rgb(255, 255, 255);
+    outline: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 4px;
+    font-size: small;
+    transition: .4s;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.btn-logout:hover {
+    background-color: rgb(158, 31, 31);
+    color: white;
 }
 .chat-container {
   height: 90vh;

@@ -24,7 +24,7 @@ const LoginPage = () => {
   };
 
   useEffect(() => {
-    if(data.success) {
+    if(data && data.success) {
       dispatch({type: "LOGIN_STATUS", value: true})
     }
   }, [data])
