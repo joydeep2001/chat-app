@@ -4,72 +4,85 @@ import Conversation from "./Conversation";
 
 import "./components.css";
 import { AppContext } from "../context/AppContex";
+import useAxiosWrapper from "../hooks/useAxiosWrapper";
+import { AiOutlineLogout } from "react-icons/ai";
 
-const api_data = [
-  {
-    sender: "cornhub",
-    message_type: "text",
-    content: "I am corn",
-    url: null,
-    group_id: null,
-    reciver_id: "milky dot com",
-    timestamp: 1710404168852,
-  },
-  {
-    sender: "milky dot com",
-    message_type: "text",
-    content: "I am tonmay",
-    url: null,
-    group_id: null,
-    reciver_id: "cornhub",
-    timestamp: 1710404168853,
-  },
-  {
-    sender: "come on sudra",
-    message_type: "text",
-    content: "I am tonmay",
-    url: null,
-    group_id: null,
-    reciver_id: "cornhub",
-    timestamp: 1710404168854,
-  },
+// const api_data = [
+//   {
+//     sender: "cornhub",
+//     message_type: "text",
+//     content: "I am corn",
+//     url: null,
+//     group_id: null,
+//     reciver_id: "milky dot com",
+//     timestamp: 1710404168852,
+//   },
+//   {
+//     sender: "milky dot com",
+//     message_type: "text",
+//     content: "I am tonmay",
+//     url: null,
+//     group_id: null,
+//     reciver_id: "cornhub",
+//     timestamp: 1710404168853,
+//   },
+//   {
+//     sender: "come on sudra",
+//     message_type: "text",
+//     content: "I am tonmay",
+//     url: null,
+//     group_id: null,
+//     reciver_id: "cornhub",
+//     timestamp: 1710404168854,
+//   },
   
-  {
-    sender: "milky dot com",
-    message_type: "text",
-    content: "I am tonmay",
-    url: null,
-    group_id: null,
-    reciver_id: "cornhub",
-    timestamp: 1710404168856,
-  },
-  {
-    sender: "come on sudra",
-    message_type: "text",
-    content: "hi",
-    url: null,
-    group_id: null,
-    reciver_id: "cornhub",
-    timestamp: 1710404168857,
-  },
-];
+//   {
+//     sender: "milky dot com",
+//     message_type: "text",
+//     content: "I am tonmay",
+//     url: null,
+//     group_id: null,
+//     reciver_id: "cornhub",
+//     timestamp: 1710404168856,
+//   },
+//   {
+//     sender: "come on sudra",
+//     message_type: "text",
+//     content: "hi",
+//     url: null,
+//     group_id: null,
+//     reciver_id: "cornhub",
+//     timestamp: 1710404168857,
+//   },
+// ];
 export default function ChatPage() {
   const [chats, setChats] = useState(new Map());
   const [selectedChat, setSelectedChat] = useState(null);
-  const {appState: {userId}} = useContext(AppContext)
+  const {appState: {userId}, dispatch} = useContext(AppContext);
+  const {data: api_data, fetchData} = useAxiosWrapper();
+  const {data, fetchData: callLogout} = useAxiosWrapper();
 
   function onSelectedChatChange(sender_id) {
     //console.log(sender_id);
     setSelectedChat(sender_id);
   }
+  function logout() {
+    callLogout("/auth/logout", {
+        method: "GET"
+    });
+  }
+  useEffect(() => {
+    if(data)
+        dispatch({type: "LOGIN_STATUS", value: false})
+  }, [data]);
 
   useEffect(() => {
     const tempChat = new Map();
     console.log("user id: "+ userId)
     //sorting in decending order wtr timestamp of a message
-    api_data.sort((a, b) => b.timestamp - a.timestamp);
+    api_data?.sort((a, b) => b.timestamp - a.timestamp);
 
-    api_data.forEach((message) => {
+    api_data?.forEach((message) => {
       
       let key = message.sender;
       if(message.group_id !== null) {
@@ -105,11 +118,17 @@ export default function ChatPage() {
     // console.log(result);
 
     setChats(tempChat);
-  }, []);
+  }, [api_data]);
   return (
     <div className="chat-container">
       <header>
         <h2>XChat</h2>
+        <div className="tool-box">
+            
+            <button className="btn-add-contacts"> Add Contacts</button>
+            <button className="btn-add-contacts"> Create Group</button>
+            <button onClick={logout} className="btn-logout"> <AiOutlineLogout  /> Logout</button>
+        </div>
       </header>
       <main>
         <div className="left">
