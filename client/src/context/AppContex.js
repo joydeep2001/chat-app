@@ -5,6 +5,7 @@ const initialAppState = {
   loginStatus: false,
   loading: true,
   userId: null,
+  token: null
 };
 export const AppContext = createContext(initialAppState);
 
@@ -16,6 +17,8 @@ const reducer = (state, action) => {
       return { ...state, loading: action.value };
     case "UID":
       return { ...state, userId: action.value };
+    case "TOKEN":
+        return { ...state, token: action.value }
     default:
       return state;
   }
@@ -37,7 +40,8 @@ export default function AppContextProvider({ children }) {
   useEffect(() => {
     dispatch({ type: "LOGIN_STATUS", value: data?.loginStatus });
     dispatch({ type: "UID", value: data?.user_id });
-    if (data && Object.prototype.hasOwnProperty.call(data, "loginStatus"))
+    dispatch({ type: "TOKEN", value: data?.token });
+    if (data && Object.prototype.hasOwnProperty.call(data, "loginStatus")) 
       dispatch({ type: "LOADING_STATUS", value: false });
   }, [data]);
 

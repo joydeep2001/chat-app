@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import ChatItem from "./ChatItem";
 import Conversation from "./Conversation";
 
@@ -60,9 +60,10 @@ const api_data = [];
 export default function ChatPage() {
   const [chats, setChats] = useState(new Map());
   const [selectedChat, setSelectedChat] = useState(null);
-  const {appState: {userId}, dispatch} = useContext(AppContext);
+  const {appState: {userId, token}, dispatch} = useContext(AppContext);
   const {data: api_data, fetchData: getMessages} = useAxiosWrapper();
   const {data, fetchData: callLogout} = useAxiosWrapper();
+  const wsRef = useRef(null);
 
   function onSelectedChatChange(sender_id) {
     //console.log(sender_id);
@@ -77,6 +78,20 @@ export default function ChatPage() {
     if(data)
         dispatch({type: "LOGIN_STATUS", value: false})
   }, [data]);
+
+  useEffect(() => {
+    wsRef.current = new WebSocket('ws://localhost:3005', [token]);
+
+    wsRef.current.onmessage = message => {
+        console.log(message);
+    }
+
+    return () => {
+      wsRef.current.close();
+    };
+    
+  }, [])
+
 
   useEffect(() => {
     getMessages("/messages", {
@@ -160,6 +175,8 @@ export default function ChatPage() {
             <Conversation
               selectedChat={selectedChat}
               data={chats.get(selectedChat)}
+              ws={wsRef.current}
+              setChats={setChats}
             />
           )}
         </div>
