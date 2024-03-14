@@ -1,7 +1,7 @@
 const { json } = require("express");
 const Message = require("../models/message");
-const Group = require("../models/group")
-const Contact = require("../models/contact")
+const Group = require("../models/group");
+const Contact = require("../models/contact");
 
 const WebSocketServer = require("websocket").server;
 const jwt = require("jsonwebtoken");
@@ -18,16 +18,21 @@ class WebSocketManager {
       const authToken = req.httpRequest.headers["sec-websocket-protocol"];
       // console.log(authToken)
       // console.log("here")
-      const userId = jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET);
+      let userId;
+      try {
+        userId = jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET);
+      } catch (err) {
+        console.log(err);
+        return resizeBy.status(403).send("Invalid token!!");
+      }
+
       this.connections.set(userId.id, connection);
       console.log(`${userId.id}: connected`);
-
-      
 
       connection.on("close", () => {
         console.log("Connection closed..");
         this.connections.delete(userId.id);
-        console.log(this.connections.keys())
+        console.log(this.connections.keys());
       });
       connection.on("message", (message) => {
         console.log(userId.id);
@@ -95,11 +100,10 @@ class WebSocketManager {
       url = content;
     }
 
-    const contacts = await Contact.findOne({userId:userId.id})
+    const contacts = await Contact.findOne({ userId: userId.id });
     let contactslist = contacts.contacts;
-    if(contactslist.indexOf(reciver_id)!=-1)
-    {
-       contactslist.push(reciver_id)
+    if (contactslist.indexOf(reciver_id) != -1) {
+      contactslist.push(reciver_id);
     }
     const message_entry = new Message({
       sender: sender_id,
@@ -114,11 +118,10 @@ class WebSocketManager {
     const membersId = groupDetails.members;
     for (let member_id of membersId) {
       const receiverConnection = this.connections.get(member_id);
-      if(receiverConnection){
+      if (receiverConnection) {
         console.log("Sending Message !!");
         receiverConnection.send(JSON.stringify(savedMessage.content));
       }
-      
     }
   }
 }

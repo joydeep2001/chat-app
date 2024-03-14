@@ -28,7 +28,14 @@ router.post("/login", async (req, res) => {
       groups: user.group
     };
     
-    const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
+    let token;
+    try{
+      token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
+    } catch(err) {
+      console.log(err);
+      return res.status(500).send("Something went wrong!!");
+    }
+    
 
     res
     .status(200)
@@ -38,7 +45,8 @@ router.post("/login", async (req, res) => {
       })
       .json({
         message: user.name+" Login success",
-        user_id: user.userId
+        user_id: user.userId,
+        token
       });
   
 });
@@ -78,7 +86,7 @@ router.get("/status", async (req, res) => {
     const verified = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     console.log(verified.id);
     console.log(verified);
-    res.json({ loginStatus: true, isAdmin: verified.isAdmin, user_id: verified.id });
+    res.json({ loginStatus: true, isAdmin: verified.isAdmin, user_id: verified.id, token });
   } catch (error) {
     res.json({ loginStatus: false });
   }
