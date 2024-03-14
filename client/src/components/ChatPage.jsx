@@ -7,60 +7,14 @@ import { AppContext } from "../context/AppContex";
 import useAxiosWrapper from "../hooks/useAxiosWrapper";
 import { AiOutlineLogout } from "react-icons/ai";
 
-// const api_data = [
-//   {
-//     sender: "cornhub",
-//     message_type: "text",
-//     content: "I am corn",
-//     url: null,
-//     group_id: null,
-//     reciver_id: "milky dot com",
-//     timestamp: 1710404168852,
-//   },
-//   {
-//     sender: "milky dot com",
-//     message_type: "text",
-//     content: "I am tonmay",
-//     url: null,
-//     group_id: null,
-//     reciver_id: "cornhub",
-//     timestamp: 1710404168853,
-//   },
-//   {
-//     sender: "come on sudra",
-//     message_type: "text",
-//     content: "I am tonmay",
-//     url: null,
-//     group_id: null,
-//     reciver_id: "cornhub",
-//     timestamp: 1710404168854,
-//   },
-  
-//   {
-//     sender: "milky dot com",
-//     message_type: "text",
-//     content: "I am tonmay",
-//     url: null,
-//     group_id: null,
-//     reciver_id: "cornhub",
-//     timestamp: 1710404168856,
-//   },
-//   {
-//     sender: "come on sudra",
-//     message_type: "text",
-//     content: "hi",
-//     url: null,
-//     group_id: null,
-//     reciver_id: "cornhub",
-//     timestamp: 1710404168857,
-//   },
-// ];
+import GroupCreatePopUp from './addGroupPopUp.jsx'
 const api_data = [];
 
 export default function ChatPage() {
   const [chats, setChats] = useState(new Map());
   const [selectedChat, setSelectedChat] = useState(null);
   const {appState: {userId, token}, dispatch} = useContext(AppContext);
+  const [isGroupPopUpOpen, setIsGroupPopUpOpen] = useState(false);
   const {data: api_data, fetchData: getMessages} = useAxiosWrapper();
   const {data, fetchData: callLogout} = useAxiosWrapper();
   const wsRef = useRef(null);
@@ -129,19 +83,10 @@ export default function ChatPage() {
         sender_id: message.sender
       });
     });
-
-    //sorting the chats in ascending order for 2 benifits
-    //1. when new chat will come we can directly push it into the array
-    //2. no extra processing will require when we will display the chat in the conversation component
     tempChat.forEach((value, key) => {
       value.sort((a, b) => a.timestamp - b.timestamp);
     });
 
-    // const result = Array.from(tempChat).map(([key, messages]) => ({
-    //     name: key,
-    //     lastMessage: messages[0]
-    //   }));
-    // console.log(result);
 
     setChats(tempChat);
   }, [api_data]);
@@ -152,7 +97,10 @@ export default function ChatPage() {
         <div className="tool-box">
             
             <button className="btn-add-contacts"> Add Contacts</button>
-            <button className="btn-add-contacts"> Create Group</button>
+            <button onClick={ ()=>
+              {console.log("create button clicked..");
+              setIsGroupPopUpOpen(true)
+            }}className="btn-add-group"> Create Group</button>
             <button onClick={logout} className="btn-logout"> <AiOutlineLogout  /> Logout</button>
         </div>
       </header>
@@ -181,6 +129,7 @@ export default function ChatPage() {
           )}
         </div>
       </main>
+      {isGroupPopUpOpen && <GroupCreatePopUp />}
     </div>
   );
 }

@@ -1,3 +1,47 @@
+.group-pop-outer {
+  width: 300px;
+  height: 300px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background-color: #fff; /* Set background color to white */
+  padding: 20px; /* Add padding as needed */
+  border-radius: 10px; /* Add border-radius for rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add box shadow for depth */
+}
+.group-create-popup {
+  width: 200px; /* Adjust width as needed */
+  height: 200px;
+  margin-top:30px;
+  margin-left: 50px;
+  position:absolute;
+ 
+}
+
+.group-create-popup input {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.group-create-popup button {
+  width: 100%;
+  padding: 10px;
+  margin: 5px;
+  background-color: #007bff; /* Adjust button color as needed */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.group-create-popup button:hover {
+  background-color: #0056b3; /* Adjust hover color as needed */
+}
+
 header {
   background-color: #128c7e;
   color: white;
@@ -14,6 +58,7 @@ h2 {
 h3 {
   text-align: center;
 }
+
 .tool-box {
     display: flex;
     flex-wrap: wrap;
