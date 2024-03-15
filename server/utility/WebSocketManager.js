@@ -16,14 +16,18 @@ class WebSocketManager {
     websocket.on("request", (req) => {
       const connection = req.accept(null, req.origin);
       const authToken = req.httpRequest.headers["sec-websocket-protocol"];
-      // console.log(authToken)
+      
       // console.log("here")
       let userId;
       try {
         userId = jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET);
       } catch (err) {
+        console.log("The error is here!");
+        console.log(authToken);
         console.log(err);
-        }
+
+        return;
+      }
 
       this.connections.set(userId.id, connection);
       console.log(`${userId.id}: connected`);
@@ -87,7 +91,7 @@ class WebSocketManager {
     console.log("Conn");
     if (receiverConnection) {
       console.log("Sending Message ...");
-      receiverConnection.send(JSON.stringify(savedMessage.content));
+      receiverConnection.send(JSON.stringify(savedMessage));
     }
   }
   async multicast(group_id, m_type, sender_id, content) {
