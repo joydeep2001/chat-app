@@ -7,16 +7,19 @@ import { AppContext } from "../context/AppContex";
 import useAxiosWrapper from "../hooks/useAxiosWrapper";
 import { AiOutlineLogout } from "react-icons/ai";
 
-import GroupCreatePopUp from './addGroupPopUp.jsx'
+import GroupCreatePopUp from "./addGroupPopUp.jsx";
 const api_data = [];
 
 export default function ChatPage() {
   const [chats, setChats] = useState(new Map());
   const [selectedChat, setSelectedChat] = useState(null);
-  const {appState: {userId, token}, dispatch} = useContext(AppContext);
+  const {
+    appState: { userId, token },
+    dispatch,
+  } = useContext(AppContext);
   const [isGroupPopUpOpen, setIsGroupPopUpOpen] = useState(false);
-  const {data: api_data, fetchData: getMessages} = useAxiosWrapper();
-  const {data, fetchData: callLogout} = useAxiosWrapper();
+  const { data: api_data, fetchData: getMessages } = useAxiosWrapper();
+  const { data, fetchData: callLogout } = useAxiosWrapper();
   const wsRef = useRef(null);
 
   function onSelectedChatChange(sender_id) {
@@ -25,81 +28,78 @@ export default function ChatPage() {
   }
   function logout() {
     callLogout("/auth/logout", {
-        method: "GET"
+      method: "GET",
     });
   }
   useEffect(() => {
-    if(data)
-        dispatch({type: "LOGIN_STATUS", value: false})
+    if (data) dispatch({ type: "LOGIN_STATUS", value: false });
   }, [data]);
 
   useEffect(() => {
     //if(wsRef) return;
-    if(wsRef.current) {
+    if (wsRef.current) {
       console.log(wsRef);
       return;
     }
-    wsRef.current = new WebSocket('ws://localhost:3005', [token]);
+    wsRef.current = new WebSocket("ws://localhost:3005", [token]);
     /**This is for an incomming message */
 
-    wsRef.current.onmessage = message => {
-        //console.log(message);
-        console.log("here");
-        const data = JSON.parse(message.data);
-        setChats((prevState) => {
-            
-            //const newState = new Map(prevState);
-            const newState = new Map(JSON.parse(JSON.stringify(Array.from(prevState))));
-            console.log(message);
-            //In case the user is sending message to himself we don't need to update the state from here
-            //As when the user is sender the state is locally updated in the conversation page
-            if(userId === data.sender) return prevState;
+    wsRef.current.onmessage = (message) => {
+      //console.log(message);
+      console.log("here");
+      const data = JSON.parse(message.data);
+      setChats((prevState) => {
+        //const newState = new Map(prevState);
+        const newState = new Map(
+          JSON.parse(JSON.stringify(Array.from(prevState)))
+        );
+        console.log(message);
+        //In case the user is sending message to himself we don't need to update the state from here
+        //As when the user is sender the state is locally updated in the conversation page
+        if (userId === data.sender) return prevState;
 
-            //making a deep copy of the entire conversation array which is the value of chat Map
-            //const conversation = JSON.parse(JSON.stringify(newState.get(data.sender)));
-            
-            newState.get(data.sender).push({
-              type: "text",
-              content: data.content,
-              reciver_id: userId,
-              //todo: the websocket should send the repsonse and from the response we should pick the timestamp
-              timestamp: Date.now(), //this should not be done like this.
-              url: null,
-              sender_id: data.sender,
-            });
-            return newState;
-          });
-    }
+        //making a deep copy of the entire conversation array which is the value of chat Map
+        //const conversation = JSON.parse(JSON.stringify(newState.get(data.sender)));
+
+        newState.get(data.sender).push({
+          type: "text",
+          content: data.content,
+          reciver_id: userId,
+          //todo: the websocket should send the repsonse and from the response we should pick the timestamp
+          timestamp: Date.now(), //this should not be done like this.
+          url: null,
+          sender_id: data.sender,
+        });
+        return newState;
+      });
+    };
 
     return () => {
       //wsRef.current.close();
     };
-    
-  }, [])
-
+  }, []);
 
   useEffect(() => {
     getMessages("/messages", {
-        method: "GET"
-    })
-  }, [])
+      method: "GET",
+    });
+  }, []);
 
   useEffect(() => {
-    if(!api_data) return;
+    if (!api_data) return;
     console.log("api data", api_data);
 
     const tempChat = new Map();
-    console.log("user id: "+ userId)
+    console.log("user id: " + userId);
     //sorting in decending order wtr timestamp of a message
     api_data[0].sort((a, b) => b.timestamp - a.timestamp);
 
     api_data[0].forEach((message) => {
-      
       let key = message.sender;
-      if(message.group_id !== null) {
+      if (message.group_id !== null) {
         key = message.group_id;
-      } else if(message.sender === userId) {
-        key = message.reciver_id
+      } else if (message.sender === userId) {
+        key = message.reciver_id;
       }
 
       const value = tempChat.get(key);
@@ -111,28 +111,36 @@ export default function ChatPage() {
         content: message.content,
         timestamp: message.timestamp,
         url: message.url,
-        sender_id: message.sender
+        sender_id: message.sender,
       });
     });
     tempChat.forEach((value, key) => {
       value.sort((a, b) => a.timestamp - b.timestamp);
     });
 
-
     setChats(tempChat);
   }, [api_data]);
+
+  function openAddGroupPopup() {
+    console.log("create button clicked..");
+    setIsGroupPopUpOpen(true);
+  }
+  function closeAddGroupPopup() {
+    console.log("create button clicked..");
+    setIsGroupPopUpOpen(false);
+  }
   return (
     <div className="chat-container">
       <header>
         <h2>XChat</h2>
         <div className="tool-box">
-            
-            <button className="btn-add-contacts"> Add Contacts</button>
-            <button onClick={ ()=>
-              {console.log("create button clicked..");
-              setIsGroupPopUpOpen(true)
-            }}className="btn-add-group"> Create Group</button>
-            <button onClick={logout} className="btn-logout"> <AiOutlineLogout  /> Logout</button>
+          <button className="btn-add contacts"> Add Contacts</button>
+          <button onClick={openAddGroupPopup} className="btn-add group">
+            Create Group
+          </button>
+          <button onClick={logout} className="btn-logout">
+            <AiOutlineLogout /> Logout
+          </button>
         </div>
       </header>
       <main>
@@ -160,7 +168,7 @@ export default function ChatPage() {
           )}
         </div>
       </main>
-      {isGroupPopUpOpen && <GroupCreatePopUp />}
+      {isGroupPopUpOpen && <GroupCreatePopUp onClose={closeAddGroupPopup}/>}
     </div>
   );
 }
