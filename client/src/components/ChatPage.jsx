@@ -8,6 +8,7 @@ import useAxiosWrapper from "../hooks/useAxiosWrapper";
 import { AiOutlineLogout } from "react-icons/ai";
 
 import GroupCreatePopUp from "./addGroupPopUp.jsx";
+import AddMemberPopUp from "./addContactPopUp"
 const api_data = [];
 
 export default function ChatPage() {
@@ -18,6 +19,7 @@ export default function ChatPage() {
     dispatch,
   } = useContext(AppContext);
   const [isGroupPopUpOpen, setIsGroupPopUpOpen] = useState(false);
+  const [isCreateMemeberPopUpOpen, setCreateMemberPopUpOpen] = useState(false);
   const { data: api_data, fetchData: getMessages } = useAxiosWrapper();
   const { data, fetchData: callLogout } = useAxiosWrapper();
   const wsRef = useRef(null);
@@ -129,12 +131,20 @@ export default function ChatPage() {
     console.log("create button clicked..");
     setIsGroupPopUpOpen(false);
   }
+  function openCreateMemberPopUp(){
+    console.log("Member Add clicked")
+    setCreateMemberPopUpOpen(true);
+  }
+  function closeCreateMemberPop(){
+    console.log("Add Member Close clicked ..")
+    setCreateMemberPopUpOpen(false);
+  }
   return (
     <div className="chat-container">
       <header>
         <h2>XChat</h2>
         <div className="tool-box">
-          <button className="btn-add contacts"> Add Contacts</button>
+          <button onClick={openCreateMemberPopUp} className="btn-add contacts"> Add Contacts</button>
           <button onClick={openAddGroupPopup} className="btn-add group">
             Create Group
           </button>
@@ -169,6 +179,7 @@ export default function ChatPage() {
         </div>
       </main>
       {isGroupPopUpOpen && <GroupCreatePopUp onClose={closeAddGroupPopup}/>}
+      {isCreateMemeberPopUpOpen && <AddMemberPopUp onClose={closeAddGroupPopup} />}
     </div>
   );
 }

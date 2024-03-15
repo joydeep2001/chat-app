@@ -1,3 +1,60 @@
+
+.add-contact-outer {
+  width: 300px;
+  height: 300px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background-color: #fff; /* Set background color to white */
+  padding: 20px; /* Add padding as needed */
+  border-radius: 10px; /* Add border-radius for rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add box shadow for depth */
+}
+
+.add-contact-popup {
+  width: 200px; /* Adjust width as needed */
+  height: 200px;
+  margin-top:30px;
+  margin-left: 50px;
+  position:absolute;
+}
+
+.add-contact-popup input[type="text"] {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.add-contact-popup button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  outline: none;
+}
+
+.add-contact-popup button[type="submit"] {
+  background-color: #007bff; /* Blue submit button */
+  color: white;
+}
+
+.add-contact-popup button[type="submit"]:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.add-contact-popup button[type="close"] {
+  background-color: #dc3545; /* Red close button */
+  color: white;
+}
+
+.add-contact-popup button[type="close"]:hover {
+  background-color: #c82333; /* Darker red on hover */
+}
+
+
 .group-pop-outer {
   width: 300px;
   height: 300px;
