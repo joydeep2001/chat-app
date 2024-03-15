@@ -30,7 +30,7 @@ router.post("/", async (req, res) => {
       } else {
         // if group doesn't exist then create a new one
         let members = [];
-        members.push(member_id);
+        members.push(...member_id);
         const savedGroup = new Group({
           id: group_id,
           name: req.body.name,
