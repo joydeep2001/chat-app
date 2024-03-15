@@ -80,14 +80,44 @@ export default function ChatPage() {
   }, [data]);
 
   useEffect(() => {
+    //if(wsRef) return;
+    if(wsRef.current) {
+      console.log(wsRef);
+      return;
+    }
     wsRef.current = new WebSocket('ws://localhost:3005', [token]);
+    /**This is for an incomming message */
 
     wsRef.current.onmessage = message => {
-        console.log(message);
+        //console.log(message);
+        console.log("here");
+        const data = JSON.parse(message.data);
+        setChats((prevState) => {
+            
+            const newState = new Map(prevState);
+            console.log(message);
+            //In case the user is sending message to himself we don't need to update the state from here
+            //As when the user is sender the state is locally updated in the conversation page
+            if(userId === data.sender) return prevState;
+
+            //making a deep copy of the entire conversation array which is the value of chat Map
+            //const conversation = JSON.parse(JSON.stringify(newState.get(data.sender)));
+
+            newState.get(data.sender).push({
+              type: "text",
+              content: data.content,
+              reciver_id: userId,
+              //todo: the websocket should send the repsonse and from the response we should pick the timestamp
+              timestamp: Date.now(), //this should not be done like this.
+              url: null,
+              sender_id: data.sender,
+            });
+            return newState;
+          });
     }
 
     return () => {
-      wsRef.current.close();
+      //wsRef.current.close();
     };
     
   }, [])
