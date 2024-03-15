@@ -94,7 +94,8 @@ export default function ChatPage() {
         const data = JSON.parse(message.data);
         setChats((prevState) => {
             
-            const newState = new Map(prevState);
+            //const newState = new Map(prevState);
+            const newState = new Map(JSON.parse(JSON.stringify(Array.from(prevState))));
             console.log(message);
             //In case the user is sending message to himself we don't need to update the state from here
             //As when the user is sender the state is locally updated in the conversation page
@@ -102,7 +103,7 @@ export default function ChatPage() {
 
             //making a deep copy of the entire conversation array which is the value of chat Map
             //const conversation = JSON.parse(JSON.stringify(newState.get(data.sender)));
-
+            
             newState.get(data.sender).push({
               type: "text",
               content: data.content,
