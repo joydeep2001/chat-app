@@ -8,7 +8,7 @@ import useAxiosWrapper from "../hooks/useAxiosWrapper";
 import { AiOutlineLogout } from "react-icons/ai";
 
 import GroupCreatePopUp from "./addGroupPopUp.jsx";
-import AddMemberPopUp from "./addContactPopUp"
+import AddMemberPopUp from "./addContactPopUp";
 const api_data = [];
 
 export default function ChatPage() {
@@ -22,6 +22,8 @@ export default function ChatPage() {
   const [isCreateMemeberPopUpOpen, setCreateMemberPopUpOpen] = useState(false);
   const { data: api_data, fetchData: getMessages } = useAxiosWrapper();
   const { data, fetchData: callLogout } = useAxiosWrapper();
+  const { data: contactInfo, fetchData: fetchContact } = useAxiosWrapper();
+
   const wsRef = useRef(null);
 
   function onSelectedChatChange(sender_id) {
@@ -123,6 +125,21 @@ export default function ChatPage() {
     setChats(tempChat);
   }, [api_data]);
 
+  useEffect(() => {
+    if(!contactInfo) return;
+    
+    console.log(contactInfo);
+    setChats((prevState) => {
+      const newState = new Map(
+        JSON.parse(JSON.stringify(Array.from(prevState)))
+      );
+      newState.set(contactInfo.user.userId, []);
+
+      return newState;
+    })
+    
+  }, [contactInfo])
+
   function openAddGroupPopup() {
     console.log("create button clicked..");
     setIsGroupPopUpOpen(true);
@@ -131,12 +148,12 @@ export default function ChatPage() {
     console.log("create button clicked..");
     setIsGroupPopUpOpen(false);
   }
-  function openCreateMemberPopUp(){
-    console.log("Member Add clicked")
+  function openCreateMemberPopUp() {
+    console.log("Member Add clicked");
     setCreateMemberPopUpOpen(true);
   }
-  function closeCreateMemberPop(){
-    console.log("Add Member Close clicked ..")
+  function closeContactPopup() {
+    console.log("Add Member Close clicked ..");
     setCreateMemberPopUpOpen(false);
   }
   return (
@@ -144,7 +161,10 @@ export default function ChatPage() {
       <header>
         <h2>XChat</h2>
         <div className="tool-box">
-          <button onClick={openCreateMemberPopUp} className="btn-add contacts"> Add Contacts</button>
+          <button onClick={openCreateMemberPopUp} className="btn-add contacts">
+            {" "}
+            Add Contacts
+          </button>
           <button onClick={openAddGroupPopup} className="btn-add group">
             Create Group
           </button>
@@ -157,7 +177,7 @@ export default function ChatPage() {
         <div className="left">
           {Array.from(chats).map(([key, messages]) => (
             <ChatItem
-              key={messages[0].timestamp + "" + key}
+              key={messages[0]?.timestamp ?? Date.now() + "" + key}
               sender={key}
               message={messages[0]}
               onClick={onSelectedChatChange}
@@ -178,8 +198,13 @@ export default function ChatPage() {
           )}
         </div>
       </main>
-      {isGroupPopUpOpen && <GroupCreatePopUp onClose={closeAddGroupPopup}/>}
-      {isCreateMemeberPopUpOpen && <AddMemberPopUp onClose={closeAddGroupPopup} />}
+      {isGroupPopUpOpen && <GroupCreatePopUp onClose={closeAddGroupPopup} />}
+      {isCreateMemeberPopUpOpen && (
+        <AddMemberPopUp
+          fetchContact={fetchContact}
+          onClose={closeContactPopup}
+        />
+      )}
     </div>
   );
 }

@@ -17,6 +17,7 @@ const multicast = require("./routes/multicast");
 const unicast = require("./routes/unicast");
 const groupCreate = require("./routes/createGroup");
 const message = require("./routes/fetchMessage");
+const contact = require("./routes/fetchContact");
 
 dotenv.config();
 const cors = require("cors");
@@ -51,6 +52,7 @@ app.use("/api/v1/messages", message);
 app.use("/api/v1/multicast", multicast);
 app.use("/api/v1/unicast", unicast);
 app.use("/api/v1/group-create", groupCreate);
+app.use("/api/v1/contacts/", contact);
 
 server.listen(PORT, () => {
   console.log(`Server is Running ${PORT}`);

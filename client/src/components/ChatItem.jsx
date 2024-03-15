@@ -11,7 +11,7 @@ export default function ChatItem({ sender, message, onClick, active }) {
       </div>
       <div className="display-text">
         <span className="sender">{sender}</span>
-        <span className="last-message">{message.content}</span>
+        <span className="last-message">{message?.content}</span>
       </div>
     </div>
   );
