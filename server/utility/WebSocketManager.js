@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 class WebSocketManager {
   websocket;
   connections;
+
   constructor(server) {
     const websocket = new WebSocketServer({ httpServer: server });
     this.websocket = websocket;
@@ -15,9 +16,29 @@ class WebSocketManager {
 
     websocket.on("request", (req) => {
       const connection = req.accept(null, req.origin);
-      const authToken = req.httpRequest.headers["sec-websocket-protocol"];
-      
-      // console.log("here")
+      //const authToken = req.httpRequest.headers["sec-websocket-protocol"];
+      //const authToken = req.httpRequest.headers.cookie
+
+      const getAuthTokenFromCookie = (cookieStr = "") => {
+        const cookies = cookieStr.split(";");
+
+        console.log(cookies);
+        if (cookies.length === 0) throw new Error("INVALID COOKIE");
+        try {
+          const [[authTokenKey, authTokenValue]] = cookies
+            .map((cookie) => cookie.trim().split("="))
+            .filter(([cookieName, value]) => cookieName === "auth-token");
+
+          console.log(authTokenKey, authTokenValue);
+          return authTokenValue;
+        } catch (err) {
+          throw err;
+        }
+        
+      };
+
+      const authToken = getAuthTokenFromCookie(req.httpRequest.headers.cookie);
+      console.log(getAuthTokenFromCookie(req.httpRequest.headers.cookie));
       let userId;
       try {
         userId = jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET);
