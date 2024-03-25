@@ -15,7 +15,7 @@ export default function ChatPage() {
   const [chats, setChats] = useState(new Map());
   const [selectedChat, setSelectedChat] = useState(null);
   const {
-    appState: { userId, token },
+    appState: { userId },
     dispatch,
   } = useContext(AppContext);
   const [isGroupPopUpOpen, setIsGroupPopUpOpen] = useState(false);
@@ -45,7 +45,7 @@ export default function ChatPage() {
       console.log(wsRef);
       return;
     }
-    wsRef.current = new WebSocket("ws://localhost:3005", [token]);
+    wsRef.current = new WebSocket("ws://localhost:3005");
     /**This is for an incomming message */
 
     wsRef.current.onmessage = (message) => {
