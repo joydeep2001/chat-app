@@ -4,20 +4,24 @@ const Message = require("../models/message");
 const jwt = require("jsonwebtoken");
 
 router.get("/", async (req, res) => {
+  let jwtPayload;
   try {
     const authToken = req.cookies["auth-token"];
-    const sender_id = jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET).id;
-    const receiver_id = req.query.receiver_id;
-    const groups_ids = jwt.verify(
-      authToken,
-      process.env.ACCESS_TOKEN_SECRET
-    ).groups;
+    jwtPayload = jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET);
+  } catch(err) {
+    console.log("Invalid token Provided");
+    res.status(400).json({message: "Invalid Token provided!"})
+  }
+
+  try {
+    
+    
     //let group_ids = groups.map(group => group._id);
     let old_messages = await Message.find({
       $or: [
-        { sender: sender_id },
-        { receiver: receiver_id },
-        { group_id: { $in: groups_ids } },
+        { sender: jwtPayload.userId },
+        { receiver: jwtPayload.userId },
+        { group_id: { $in: jwtPayload.groups } },
       ],
     });
     // Fetch messages for all groups using $in operator
