@@ -25,7 +25,7 @@ router.get('/',async(req,res)=>{
 })
 
 router.post("/",async(req,res)=>{
-    const reciver_id = req.body.reciver_id;
+    const receiver_id = req.body.receiver_id;
     try {
         const content = req.body.content;
         const type = req.body.type;
@@ -46,11 +46,11 @@ router.post("/",async(req,res)=>{
             content:content,
             url:url,
             group_id:null,
-            reciver_id:reciver_id
+            receiver_id:receiver_id
         })
         const savedMessage = await message_entry.save()
 
-        const reciever = User.findOne(reciver_id).members
+        const reciever = User.findOne(receiver_id).members
         res.status(200).json({"message":"Sent Successfully"});
 
     } catch (err) {

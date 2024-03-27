@@ -57,7 +57,7 @@ router.post("/:group_id",async(req,res)=>{
             content:content,
             url:url,
             group_id:group_id,
-            reciver_id:null
+            receiver_id:null
         })
         const savedMessage = await message_entry.save()
 

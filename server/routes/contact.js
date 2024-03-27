@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   const authToken = req.cookies["auth-token"];
- 
+
   try {
     jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET).id;
   } catch (err) {
@@ -45,7 +45,7 @@ router.get("/:id", async (req, res) => {
 
   if (!user) return res.status(400).json({ message: "User Doesn't exists!" });
 
-  res.status(200).json({user, message: "User exists!" });
+  res.status(200).json({ user, message: "User exists!" });
 });
 
 module.exports = router;

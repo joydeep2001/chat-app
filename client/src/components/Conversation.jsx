@@ -16,7 +16,7 @@ export default function Conversation({ selectedChat, data, ws, setChats }) {
     setMessage("");
     const payload = {
       content: message,
-      reciver_id: selectedChat,
+      receiver_id: selectedChat,
       content_type: "text",
       communicationType: "unicast",
     };

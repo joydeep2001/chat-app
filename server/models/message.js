@@ -3,7 +3,7 @@ const messageSchema = mongoose.Schema({
   id: {
     type: String,
   },
-  sender: {
+  sender_id: {
     type: String,
   },
   message_type: {
@@ -18,7 +18,7 @@ const messageSchema = mongoose.Schema({
   group_id: {
     type: String,
   },
-  reciver_id: {
+  receiver_id: {
     type: String,
   },
   timestamp: {

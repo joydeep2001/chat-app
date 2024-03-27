@@ -56,25 +56,25 @@ class WebSocketManager {
       });
       connection.on("message", (message) => {
         console.log(userId.id);
-        const { content, reciver_id, content_type, communicationType } =
+        const { content, receiver_id, content_type, communicationType } =
           JSON.parse(message.utf8Data);
         console.log(communicationType);
         console.log(content);
         console.log(content_type);
-        console.log(reciver_id);
+        console.log(receiver_id);
         console.log(message.utf8Data);
         if (communicationType === "unicast") {
           console.log("Calling Unicast Route ..");
-          this.unicast(reciver_id, content_type, userId.id, content);
+          this.unicast(receiver_id, content_type, userId.id, content);
         } else {
           console.log("Calling Multicast...");
-          this.multicast(reciver_id, content_type, userId.id, content);
+          this.multicast(receiver_id, content_type, userId.id, content);
         }
       });
     });
   }
 
-  async unicast(reciver_id, m_type, sender_id, content) {
+  async unicast(receiver_id, m_type, sender_id, content) {
     let message = null;
     let url = null;
     if (m_type === "text") {
@@ -83,17 +83,17 @@ class WebSocketManager {
       url = content;
     }
     const message_entry = new Message({
-      sender: sender_id,
+      sender_id: sender_id,
       message_type: m_type,
       content: content,
       url: url,
       group_id: null,
-      reciver_id: reciver_id,
+      receiver_id: receiver_id,
     });
     const savedMessage = await message_entry.save();
     console.log(savedMessage);
-    const receiverConnection = this.connections.get(reciver_id);
-    console.log(reciver_id);
+    const receiverConnection = this.connections.get(receiver_id);
+    console.log(receiver_id);
     console.log("Conn");
     if (receiverConnection) {
       console.log("Sending Message ...");
@@ -111,16 +111,16 @@ class WebSocketManager {
 
     const contacts = await Contact.findOne({ userId: userId.id });
     let contactslist = contacts.contacts;
-    if (contactslist.indexOf(reciver_id) != -1) {
-      contactslist.push(reciver_id);
+    if (contactslist.indexOf(receiver_id) != -1) {
+      contactslist.push(receiver_id);
     }
     const message_entry = new Message({
-      sender: sender_id,
+      sender_id: sender_id,
       message_type: m_type,
       content: content,
       url: url,
       group_id: null,
-      reciver_id: group_id,
+      receiver_id: group_id,
     });
     const savedMessage = await message_entry.save();
     const groupDetails = await Group.findOne({ id: group_id });

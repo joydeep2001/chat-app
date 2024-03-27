@@ -59,20 +59,20 @@ export default function ChatPage() {
         );
         console.log(message);
         //In case the user is sending message to himself we don't need to update the state from here
-        //As when the user is sender the state is locally updated in the conversation page
-        if (userId === data.sender) return prevState;
+        //As when the user is sender_id the state is locally updated in the conversation page
+        if (userId === data.sender_id) return prevState;
 
         //making a deep copy of the entire conversation array which is the value of chat Map
-        //const conversation = JSON.parse(JSON.stringify(newState.get(data.sender)));
+        //const conversation = JSON.parse(JSON.stringify(newState.get(data.sender_id)));
 
-        newState.get(data.sender).push({
+        newState.get(data.sender_id).push({
           type: "text",
           content: data.content,
-          reciver_id: userId,
+          receiver_id: userId,
           //todo: the websocket should send the repsonse and from the response we should pick the timestamp
           timestamp: Date.now(), //this should not be done like this.
           url: null,
-          sender_id: data.sender,
+          sender_id: data.sender_id,
         });
         return newState;
       });
@@ -90,6 +90,7 @@ export default function ChatPage() {
   }, []);
 
   useEffect(() => {
+    //this useEffect is setting up the chat_map 
     if (!api_data) return;
     console.log("api data", api_data);
 
@@ -99,11 +100,11 @@ export default function ChatPage() {
     api_data[0].sort((a, b) => b.timestamp - a.timestamp);
 
     api_data[0].forEach((message) => {
-      let key = message.sender;
+      let key = message.sender_id;
       if (message.group_id !== null) {
         key = message.group_id;
-      } else if (message.sender === userId) {
-        key = message.reciver_id;
+      } else if (message.sender_id === userId) {
+        key = message.receiver_id;
       }
 
       const value = tempChat.get(key);
@@ -115,7 +116,7 @@ export default function ChatPage() {
         content: message.content,
         timestamp: message.timestamp,
         url: message.url,
-        sender_id: message.sender,
+        sender_id: message.sender_id,
       });
     });
     tempChat.forEach((value, key) => {
@@ -178,7 +179,7 @@ export default function ChatPage() {
           {Array.from(chats).map(([key, messages]) => (
             <ChatItem
               key={messages[0]?.timestamp ?? Date.now() + "" + key}
-              sender={key}
+              sender_id={key}
               message={messages[0]}
               onClick={onSelectedChatChange}
               active={selectedChat === key}

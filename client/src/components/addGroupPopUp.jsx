@@ -11,17 +11,15 @@ export default function GroupCreatePopUp({ onClose }) {
 
   function onSubmit(data) {
     const groupName = data.groupName;
-    const groupId = data.groupId;
     const members = data.memberId.split(",");
     const payload = {
-        groupName,
-        group_id: groupId,
-        member_id: members
+        group_name: groupName,
+        members
     }
-    addGroup("/group-create/", {
+    addGroup("/group/", {
         method: "POST",
         data: payload
-    })
+    });
     console.log(payload);
     //handleClose(); 
   }
@@ -31,7 +29,6 @@ export default function GroupCreatePopUp({ onClose }) {
       <div className="group-create-popup">
         <form onSubmit={handleSubmit(onSubmit)}>
           <input type="text" placeholder="Enter Group Name" {...register('groupName')} />
-          <input type="text" placeholder="Enter Group Id" {...register('groupId')} />
           <input type="text" placeholder="Enter coma speareted member id" {...register('memberId')} />
           <button type="submit">Create</button>
           <button type="button" onClick={handleClose}>Close</button>

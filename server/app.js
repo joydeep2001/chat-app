@@ -11,13 +11,10 @@ const WebSocketManager = require("./utility/WebSocketManager");
 
 const groupSchema = require("./models/group");
 const user = require("./models/user");
-//const message = require("./models/message");
-const chat = require("./routes/chat");
-const multicast = require("./routes/multicast");
-const unicast = require("./routes/unicast");
-const groupCreate = require("./routes/createGroup");
-const message = require("./routes/fetchMessage");
-const contact = require("./routes/fetchContact");
+const group = require("./routes/group");
+const message = require("./routes/message");
+const contact = require("./routes/contact")
+
 
 dotenv.config();
 const cors = require("cors");
@@ -47,12 +44,11 @@ const websocketmanager = new WebSocketManager(server);
 let PORT = process.env.PORT || 3005;
 
 app.use("/api/v1/auth", auth);
-app.use("/api/v1/chat", chat);
+app.use("/api/v1/contacts", contact);
+app.use("/api/v1/group", group);
 app.use("/api/v1/messages", message);
-app.use("/api/v1/multicast", multicast);
-app.use("/api/v1/unicast", unicast);
-app.use("/api/v1/group-create", groupCreate);
-app.use("/api/v1/contacts/", contact);
+
+
 
 server.listen(PORT, () => {
   console.log(`Server is Running ${PORT}`);
