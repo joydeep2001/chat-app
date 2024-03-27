@@ -16,9 +16,6 @@ class WebSocketManager {
 
     websocket.on("request", (req) => {
       const connection = req.accept(null, req.origin);
-      //const authToken = req.httpRequest.headers["sec-websocket-protocol"];
-      //const authToken = req.httpRequest.headers.cookie
-
       const getAuthTokenFromCookie = (cookieStr = "") => {
         const cookies = cookieStr.split(";");
 
@@ -34,7 +31,6 @@ class WebSocketManager {
         } catch (err) {
           throw err;
         }
-        
       };
 
       const authToken = getAuthTokenFromCookie(req.httpRequest.headers.cookie);
@@ -74,19 +70,11 @@ class WebSocketManager {
           console.log("Calling Multicast...");
           this.multicast(reciver_id, content_type, userId.id, content);
         }
-
-        // connections.forEach(connection => connection.send("So you want to say " + );
       });
     });
   }
 
   async unicast(reciver_id, m_type, sender_id, content) {
-    // const contacts = await Contact.findOne({userId:userId.id})
-    // let contactslist = contacts.contacts;
-    // if(contactslist.indexOf(reciver_id)!=-1)
-    // {
-    //   contactslist.push(reciver_id)
-    // }
     let message = null;
     let url = null;
     if (m_type === "text") {
@@ -105,10 +93,7 @@ class WebSocketManager {
     const savedMessage = await message_entry.save();
     console.log(savedMessage);
     const receiverConnection = this.connections.get(reciver_id);
-
-    //console.log(this.connections)
     console.log(reciver_id);
-    //console.log(receiverConnection);
     console.log("Conn");
     if (receiverConnection) {
       console.log("Sending Message ...");
@@ -150,25 +135,3 @@ class WebSocketManager {
   }
 }
 module.exports = WebSocketManager;
-
-// websocket.on('request',(req)=>{
-//     const connection = req.accept(null,req.origin)
-//     // console.log(req.origin);
-//     // console.log(req.headers);
-
-//       console.log(`${userId.id} connected......`)
-//       connections.set(userId.id,connection)
-//   //    console.log(connections)
-
-//       connection.on("close", () =>{
-//         connections.delete(userId)
-//       });
-//       connection.on("message", (message) => {
-//           // we have some message
-//         console.log(userId.id);
-//         const data = message.utf8Data;
-//         const reciver_id = data.reciever
-//         const content = data.message;
-
-//       })
-//   })
