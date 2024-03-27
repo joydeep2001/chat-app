@@ -31,6 +31,14 @@ router.post("/", async (req, res) => {
   const dbRes = await group.save();
   console.log(dbRes);
 
+  const user = await User.updateMany(
+    {userId:{ $in:[...member, payload.id]}},
+    {$push: {group: groupName}}
+  )
+
+  console.log("group name updated in user: ");
+  console.log(user);
+
   res.status(201).json({
     message: "Group created successfully!",
     data: dbRes

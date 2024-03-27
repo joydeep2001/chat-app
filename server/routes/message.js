@@ -17,15 +17,17 @@ router.get("/", async (req, res) => {
   }
 
   try {
-    const user = User.find({user_id: jwtPayload.id})
+    const user = await User.findOne({ userId: jwtPayload.id });
+    console.log(user);
     
     let old_messages = await Message.find({
       $or: [
         { sender_id: jwtPayload.id },
         { receiver_id: jwtPayload.id },
+        { group_id: { $in: user.group } },
       ],
     });
-    
+
     // Fetch messages for all groups using $in operator
     // let old_messages_group = await Message.find({  });
     // old_messages_all.push(old_messages_group);
