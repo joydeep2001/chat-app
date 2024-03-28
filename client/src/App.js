@@ -1,25 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+
+import React, { useContext } from "react";
+import "./App.css";
+
+import LoginPage from "./components/Login";
+import ChatPage from "./components/ChatPage";
+import AppContextProvider, { AppContext } from "./context/AppContex";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppContextProvider>
+      <AppContent />
+    </AppContextProvider>
   );
+}
+
+function AppContent() {
+  const {
+    appState: { loginStatus },
+  } = useContext(AppContext);
+
+  return !loginStatus ? <LoginPage /> : <ChatPage />;
 }
 
 export default App;
