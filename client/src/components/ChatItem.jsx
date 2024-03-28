@@ -5,7 +5,11 @@ export default function ChatItem({ sender_id, message, onClick, active }) {
     onClick(e.currentTarget.dataset.id);
   }
   return (
-    <div onClick={handleClick}  data-id={sender_id} className={`chat-item ${active && "active-chat"}`}>
+    <div
+      onClick={handleClick}
+      data-id={message.group_id ?? sender_id}
+      className={`chat-item ${active && "active-chat"}`}
+    >
       <div className="icon">
         <CiUser />
       </div>

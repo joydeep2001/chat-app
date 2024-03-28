@@ -47,13 +47,14 @@ export default function ChatPage() {
     }
     wsRef.current = new WebSocket("ws://localhost:3005");
     /**This is for an incomming message */
-
+    
     wsRef.current.onmessage = (message) => {
       //console.log(message);
-      console.log("here");
+      console.log("Incomming message");
       const data = JSON.parse(message.data);
       setChats((prevState) => {
-        //const newState = new Map(prevState);
+       
+        //making a deep copy of the entire conversation array which is the value of chat Map
         const newState = new Map(
           JSON.parse(JSON.stringify(Array.from(prevState)))
         );
@@ -61,11 +62,10 @@ export default function ChatPage() {
         //In case the user is sending message to himself we don't need to update the state from here
         //As when the user is sender_id the state is locally updated in the conversation page
         if (userId === data.sender_id) return prevState;
-
-        //making a deep copy of the entire conversation array which is the value of chat Map
-        //const conversation = JSON.parse(JSON.stringify(newState.get(data.sender_id)));
-
-        newState.get(data.sender_id).push({
+        
+        let inbox = data.group_id !== null ? data.group_id : data.sender_id;
+        console.log("inbox " + inbox);
+        newState.get(inbox).push({
           type: "text",
           content: data.content,
           receiver_id: userId,
@@ -117,6 +117,7 @@ export default function ChatPage() {
         timestamp: message.timestamp,
         url: message.url,
         sender_id: message.sender_id,
+        group_id: message.group_id //We actually assuming the group_name is the group_id and it is unique across all the groups
       });
     });
     tempChat.forEach((value, key) => {
@@ -141,6 +142,27 @@ export default function ChatPage() {
     
   }, [contactInfo])
 
+  function createGroup(groupName, groupId) {
+    setChats((prevState) => {
+      const newState = new Map(
+        JSON.parse(JSON.stringify(Array.from(prevState)))
+      );
+      //So we are pushing a temporary local message to the group so that the rendering happens
+      //this is a temporary 4am hack
+      //we will figure it out how to do it properly later
+      //Also we are assuming that group name must be unique across the whole system
+      newState.set(groupName, [{
+        type: "text",
+        content: "Group created",
+        timestamp: Date.now(),
+        url: null,
+        sender_id: userId,
+        group_id: groupName //We actually assuming the group_name is the group_id and it is unique across all the groups
+      }]);
+
+      return newState;
+    })
+  }
   function openAddGroupPopup() {
     console.log("create button clicked..");
     setIsGroupPopUpOpen(true);
@@ -199,7 +221,7 @@ export default function ChatPage() {
           )}
         </div>
       </main>
-      {isGroupPopUpOpen && <GroupCreatePopUp onClose={closeAddGroupPopup} />}
+      {isGroupPopUpOpen && <GroupCreatePopUp createGroup={createGroup} onClose={closeAddGroupPopup} />}
       {isCreateMemeberPopUpOpen && (
         <AddMemberPopUp
           fetchContact={fetchContact}

@@ -56,7 +56,7 @@ class WebSocketManager {
       });
       connection.on("message", (message) => {
         console.log(userId.id);
-        const { content, receiver_id, content_type, communicationType } =
+        const { content, receiver_id, content_type, communicationType, group_id } =
           JSON.parse(message.utf8Data);
         console.log(communicationType);
         console.log(content);
@@ -68,7 +68,7 @@ class WebSocketManager {
           this.unicast(receiver_id, content_type, userId.id, content);
         } else {
           console.log("Calling Multicast...");
-          this.multicast(receiver_id, content_type, userId.id, content);
+          this.multicast(group_id, content_type, userId.id, content);
         }
       });
     });
@@ -109,27 +109,27 @@ class WebSocketManager {
       url = content;
     }
 
-    const contacts = await Contact.findOne({ userId: userId.id });
-    let contactslist = contacts.contacts;
-    if (contactslist.indexOf(receiver_id) != -1) {
-      contactslist.push(receiver_id);
-    }
+    // const contacts = await Contact.findOne({ userId: sender_id });
+    // let contactslist = contacts.contacts;
+    // if (contactslist.indexOf(receiver_id) != -1) {
+    //   contactslist.push(receiver_id);
+    // }
     const message_entry = new Message({
       sender_id: sender_id,
       message_type: m_type,
       content: content,
       url: url,
-      group_id: null,
-      receiver_id: group_id,
+      group_id: group_id,
+      receiver_id: null,
     });
     const savedMessage = await message_entry.save();
-    const groupDetails = await Group.findOne({ id: group_id });
+    const groupDetails = await Group.findOne({ name: group_id }); //this should be changed later. for now group name is considered as group id
     const membersId = groupDetails.members;
     for (let member_id of membersId) {
       const receiverConnection = this.connections.get(member_id);
       if (receiverConnection) {
         console.log("Sending Message !!");
-        receiverConnection.send(JSON.stringify(savedMessage.content));
+        receiverConnection.send(JSON.stringify(savedMessage));
       }
     }
   }

@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import useAxiosWrapper from '../hooks/useAxiosWrapper';
 
-export default function GroupCreatePopUp({ onClose }) {
+export default function GroupCreatePopUp({ onClose, createGroup }) {
   const { register, handleSubmit } = useForm();
-    const {fetchData: addGroup} = useAxiosWrapper()
+    const {data, fetchData: addGroup} = useAxiosWrapper();
+    useEffect(() => {
+      if(!data) return;
+      createGroup(data.data.name);
+    }, [data])
   function handleClose() {
     onClose();
   }

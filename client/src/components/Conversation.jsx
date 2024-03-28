@@ -14,11 +14,17 @@ export default function Conversation({ selectedChat, data, ws, setChats }) {
 
   function handleSend() {
     setMessage("");
+    const comType = data.group_id !== null ? "multicast" : "unicast" ;
+    
+    const receiver_id = comType === "unicast" ? selectedChat : null;
+    const group_id = comType === "multicast" ? selectedChat : null;
+
     const payload = {
       content: message,
-      receiver_id: selectedChat,
+      receiver_id: receiver_id,
       content_type: "text",
-      communicationType: "unicast",
+      communicationType: comType,
+      group_id: group_id
     };
     console.log(payload);
 
