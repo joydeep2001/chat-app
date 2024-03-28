@@ -13,8 +13,12 @@ export default function Conversation({ selectedChat, data, ws, setChats }) {
   }
 
   function handleSend() {
-    setMessage("");
-    const comType = data.group_id !== null ? "multicast" : "unicast" ;
+    setMessage(""); //reseting the message input box
+
+    //checking the first message only to make sure that the message has a null group_id or not
+    //in case one message has a null group id all messages will have the same
+    //so depending on that we can be sure it is a group or a person
+    const comType = data[0]?.group_id !== null ? "multicast" : "unicast" ;
     
     const receiver_id = comType === "unicast" ? selectedChat : null;
     const group_id = comType === "multicast" ? selectedChat : null;
