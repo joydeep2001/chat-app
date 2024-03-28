@@ -135,7 +135,14 @@ export default function ChatPage() {
       const newState = new Map(
         JSON.parse(JSON.stringify(Array.from(prevState)))
       );
-      newState.set(contactInfo.user.userId, []);
+      newState.set(contactInfo.user.userId, [{
+        type: "text",
+        content: "Contact Added",
+        timestamp: Date.now(),
+        url: null,
+        sender_id: userId,
+        group_id: null //We actually assuming the group_name is the group_id and it is unique across all the groups
+      }]);
 
       return newState;
     })
