@@ -63,9 +63,14 @@ export default function ChatPage() {
         //As when the user is sender_id the state is locally updated in the conversation page
         if (userId === data.sender_id) return prevState;
         
-        let inbox = data.group_id !== null ? data.group_id : data.sender_id;
-        console.log("inbox " + inbox);
-        newState.get(inbox).push({
+        let inboxId = data.group_id !== null ? data.group_id : data.sender_id;
+        console.log("inbox " + inboxId);
+
+        const inbox = newState.get(inboxId);
+
+        if(!inbox) newState.set(inboxId, []);
+
+        newState.get(inboxId).push({
           type: "text",
           content: data.content,
           receiver_id: userId,
