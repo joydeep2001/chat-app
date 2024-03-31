@@ -199,7 +199,7 @@ h3 {
 
 .conversation-container {
   display: flex;
-  height: 95%;
+  height: 85%;
   flex-direction: column;
 }
 .msg-row-cont {

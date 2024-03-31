@@ -277,7 +277,7 @@ export default function ChatPage() {
           {!selectedChat ? (
             <h3>Welcome to XChat</h3>
           ) : (
-            <div>
+            <>
               <Conversation data={chats.get(selectedChat)} />
               <div className="msg-box-cont">
                 <input type="file" className="msg-send-file" />
@@ -292,7 +292,7 @@ export default function ChatPage() {
                   Send
                 </button>
               </div>
-            </div>
+            </>
           )}
         </div>
       </main>
