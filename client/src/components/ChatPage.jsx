@@ -21,7 +21,7 @@ export default function ChatPage() {
   const [isGroupPopUpOpen, setIsGroupPopUpOpen] = useState(false);
   const [isCreateMemeberPopUpOpen, setCreateMemberPopUpOpen] = useState(false);
   const { data: api_data, fetchData: getMessages } = useAxiosWrapper();
-  const { data, fetchData: callLogout } = useAxiosWrapper();
+  const { data: logoutData, fetchData: callLogout } = useAxiosWrapper();
   const { data: contactInfo, fetchData: fetchContact } = useAxiosWrapper();
 
   const wsRef = useRef(null);
@@ -36,8 +36,8 @@ export default function ChatPage() {
     });
   }
   useEffect(() => {
-    if (data) dispatch({ type: "LOGIN_STATUS", value: false });
-  }, [data]);
+    if (logoutData) dispatch({ type: "LOGIN_STATUS", value: false });
+  }, [logoutData]);
 
   useEffect(() => {
     //if(wsRef) return;
@@ -47,29 +47,36 @@ export default function ChatPage() {
     }
     wsRef.current = new WebSocket("ws://localhost:3005");
     /**This is for an incomming message */
-    
+
     wsRef.current.onmessage = (message) => {
       //console.log(message);
       console.log("Incomming message");
       const data = JSON.parse(message.data);
       setChats((prevState) => {
-       
         //making a deep copy of the entire conversation array which is the value of chat Map
         const newState = new Map(
           JSON.parse(JSON.stringify(Array.from(prevState)))
         );
         console.log(message);
         //In case the user is sending message to himself we don't need to update the state from here
-        //As when the user is sender_id the state is locally updated in the conversation page
+        //As when the user is sender_id the state is locally updated. So if we update the state again
+        //the message will be shown twice
+
         if (userId === data.sender_id) return prevState;
-        
+
         let inboxId = data.group_id !== null ? data.group_id : data.sender_id;
         console.log("inbox " + inboxId);
 
         const inbox = newState.get(inboxId);
 
-        if(!inbox) newState.set(inboxId, []);
+        if (!inbox) newState.set(inboxId, []);
 
+        console.log(
+          "setting chat state from onmessage() " +
+            data.sender_id +
+            " " +
+            data.user_id
+        );
         newState.get(inboxId).push({
           type: "text",
           content: data.content,
@@ -95,7 +102,7 @@ export default function ChatPage() {
   }, []);
 
   useEffect(() => {
-    //this useEffect is setting up the chat_map 
+    //this useEffect is setting up the chat_map
     if (!api_data) return;
     console.log("api data", api_data);
 
@@ -122,7 +129,7 @@ export default function ChatPage() {
         timestamp: message.timestamp,
         url: message.url,
         sender_id: message.sender_id,
-        group_id: message.group_id //We actually assuming the group_name is the group_id and it is unique across all the groups
+        group_id: message.group_id, //We actually assuming the group_name is the group_id and it is unique across all the groups
       });
     });
     tempChat.forEach((value, key) => {
@@ -133,26 +140,27 @@ export default function ChatPage() {
   }, [api_data]);
 
   useEffect(() => {
-    if(!contactInfo) return;
-    
+    if (!contactInfo) return;
+
     console.log(contactInfo);
     setChats((prevState) => {
       const newState = new Map(
         JSON.parse(JSON.stringify(Array.from(prevState)))
       );
-      newState.set(contactInfo.user.userId, [{
-        type: "text",
-        content: "Contact Added",
-        timestamp: Date.now(),
-        url: null,
-        sender_id: userId,
-        group_id: null //We actually assuming the group_name is the group_id and it is unique across all the groups
-      }]);
+      newState.set(contactInfo.user.userId, [
+        {
+          type: "text",
+          content: "Contact Added",
+          timestamp: Date.now(),
+          url: null,
+          sender_id: userId,
+          group_id: null, //We actually assuming the group_name is the group_id and it is unique across all the groups
+        },
+      ]);
 
       return newState;
-    })
-    
-  }, [contactInfo])
+    });
+  }, [contactInfo]);
 
   function createGroup(groupName, groupId) {
     setChats((prevState) => {
@@ -163,17 +171,19 @@ export default function ChatPage() {
       //this is a temporary 4am hack
       //we will figure it out how to do it properly later
       //Also we are assuming that group name must be unique across the whole system
-      newState.set(groupName, [{
-        type: "text",
-        content: "Group created",
-        timestamp: Date.now(),
-        url: null,
-        sender_id: userId,
-        group_id: groupName //We actually assuming the group_name is the group_id and it is unique across all the groups
-      }]);
+      newState.set(groupName, [
+        {
+          type: "text",
+          content: "Group created",
+          timestamp: Date.now(),
+          url: null,
+          sender_id: userId,
+          group_id: groupName, //We actually assuming the group_name is the group_id and it is unique across all the groups
+        },
+      ]);
 
       return newState;
-    })
+    });
   }
   function openAddGroupPopup() {
     console.log("create button clicked..");
@@ -190,6 +200,49 @@ export default function ChatPage() {
   function closeContactPopup() {
     console.log("Add Member Close clicked ..");
     setCreateMemberPopUpOpen(false);
+  }
+  const [message, setMessage] = useState("");
+
+  function handleChange(e) {
+    setMessage(e.target.value);
+  }
+
+  function handleSend() {
+    setMessage(""); //reseting the message input box
+
+    //checking the first message only to make sure that the message has a null group_id or not
+    //in case one message has a null group id all messages will have the same
+    //so depending on that we can be sure it is a group or a person
+    const data = chats.get(selectedChat);
+    const comType = data[0]?.group_id !== null ? "multicast" : "unicast";
+
+    const receiver_id = comType === "unicast" ? selectedChat : null;
+    const group_id = comType === "multicast" ? selectedChat : null;
+
+    const payload = {
+      content: message,
+      receiver_id: receiver_id,
+      content_type: "text",
+      communicationType: comType,
+      group_id: group_id,
+    };
+    console.log(payload);
+
+    wsRef.current.send(JSON.stringify(payload));
+    console.log("setting chat state from handleSend()");
+    setChats((prevState) => {
+      const newState = new Map(
+        JSON.parse(JSON.stringify(Array.from(prevState)))
+      );
+      newState.get(selectedChat).push({
+        type: "text",
+        content: payload.content,
+        timestamp: Date.now(),
+        url: null,
+        sender_id: userId,
+      });
+      return newState;
+    });
   }
   return (
     <div className="chat-container">
@@ -224,16 +277,31 @@ export default function ChatPage() {
           {!selectedChat ? (
             <h3>Welcome to XChat</h3>
           ) : (
-            <Conversation
-              selectedChat={selectedChat}
-              data={chats.get(selectedChat)}
-              ws={wsRef.current}
-              setChats={setChats}
-            />
+            <div>
+              <Conversation data={chats.get(selectedChat)} />
+              <div className="msg-box-cont">
+                <input type="file" className="msg-send-file" />
+                <input
+                  value={message}
+                  onChange={handleChange}
+                  className="message-box"
+                  placeholder="Type Your XChat here.."
+                  type="text"
+                />
+                <button onClick={handleSend} className="msg-send-btn">
+                  Send
+                </button>
+              </div>
+            </div>
           )}
         </div>
       </main>
-      {isGroupPopUpOpen && <GroupCreatePopUp createGroup={createGroup} onClose={closeAddGroupPopup} />}
+      {isGroupPopUpOpen && (
+        <GroupCreatePopUp
+          createGroup={createGroup}
+          onClose={closeAddGroupPopup}
+        />
+      )}
       {isCreateMemeberPopUpOpen && (
         <AddMemberPopUp
           fetchContact={fetchContact}

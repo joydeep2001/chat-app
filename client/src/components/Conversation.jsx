@@ -1,52 +1,12 @@
 import { useContext, useState } from "react";
 import { AppContext } from "../context/AppContex";
 
-export default function Conversation({ selectedChat, data, ws, setChats }) {
+export default function Conversation({ data }) {
   const {
     appState: { userId },
   } = useContext(AppContext);
 
-  const [message, setMessage] = useState("");
 
-  function handleChange(e) {
-    setMessage(e.target.value);
-  }
-
-  function handleSend() {
-    setMessage(""); //reseting the message input box
-
-    //checking the first message only to make sure that the message has a null group_id or not
-    //in case one message has a null group id all messages will have the same
-    //so depending on that we can be sure it is a group or a person
-    const comType = data[0]?.group_id !== null ? "multicast" : "unicast" ;
-    
-    const receiver_id = comType === "unicast" ? selectedChat : null;
-    const group_id = comType === "multicast" ? selectedChat : null;
-
-    const payload = {
-      content: message,
-      receiver_id: receiver_id,
-      content_type: "text",
-      communicationType: comType,
-      group_id: group_id
-    };
-    console.log(payload);
-
-    ws.send(JSON.stringify(payload));
-    setChats((prevState) => {
-      const newState = new Map(prevState);
-      newState.get(selectedChat).push({
-        type: "text",
-        content: payload.content,
-
-        //todo: the websocket should send the repsonse and from the response we should pick the timestamp
-        timestamp: Date.now(), //this should not be done like this.
-        url: null,
-        sender_id: userId,
-      });
-      return newState;
-    });
-  }
 
   return (
     <div className="conversation-container">
@@ -67,18 +27,6 @@ export default function Conversation({ selectedChat, data, ws, setChats }) {
             </div>
           </div>
         ))}
-      </div>
-      <div className="msg-box-cont">
-        <input
-          value={message}
-          onChange={handleChange}
-          className="message-box"
-          placeholder="Type Your XChat here.."
-          type="text"
-        />
-        <button onClick={handleSend} className="msg-send-btn">
-          Send
-        </button>
       </div>
     </div>
   );
