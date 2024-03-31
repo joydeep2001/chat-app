@@ -227,6 +227,8 @@ export default function ChatPage() {
       group_id: group_id,
     };
     console.log(payload);
+    
+    setMessage(""); //reseting the message input box
 
     wsRef.current.send(JSON.stringify(payload));
     console.log("setting chat state from handleSend()");
