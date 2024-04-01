@@ -6,6 +6,15 @@ export default function Conversation({ data }) {
     appState: { userId },
   } = useContext(AppContext);
 
+  
+  function formatDateTime(timestamp) {
+    const dateTime = new Date(timestamp);
+    // let displayHour = dateTime.getHours();
+    // if(displayHour < 10) displayHour = '0' + displayHour; 
+    // let displayMinute = dateTime.getMinutes();
+    return dateTime.toLocaleString();
+
+  }
   return (
     <div className="conversation-container">
       {/* <div>{selectedChat}</div> */}
@@ -27,6 +36,7 @@ export default function Conversation({ data }) {
               ) : (
                 <img src={message.url} alt="media" />
               )}
+               <div className="timestamp">{formatDateTime(message.timestamp)}</div>
             </div>
           </div>
         ))}

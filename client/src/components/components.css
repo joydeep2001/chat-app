@@ -251,6 +251,10 @@ h3 {
   border-color: #999;
 }
 
+.msg-row .timestamp {
+  font-size: x-small;
+  text-align: right;
+}
 /* Input box focus effect */
 .message-box:focus {
   border-color: #007bff; /* Change border color on focus */
