@@ -2,6 +2,7 @@ const { json } = require("express");
 const Message = require("../models/message");
 const Group = require("../models/group");
 const Contact = require("../models/contact");
+const fs = require("fs");
 
 const WebSocketServer = require("websocket").server;
 const jwt = require("jsonwebtoken");
@@ -56,19 +57,41 @@ class WebSocketManager {
       });
       connection.on("message", (message) => {
         console.log(userId.id);
-        const { content, receiver_id, content_type, communicationType, group_id } =
+        //console.log("message");
+        //console.log(message);
+        const { content, receiver_id, content_type, communicationType, group_id, file_name } =
           JSON.parse(message.utf8Data);
         console.log(communicationType);
-        console.log(content);
+        //console.log(content);
         console.log(content_type);
         console.log(receiver_id);
-        console.log(message.utf8Data);
+        //console.log(message.utf8Data);
+        let url = null;
+        if(content_type === "media") {
+          console.log(content);
+          const dataArray = Object.values(content).map(charCode => charCode);
+          const view = new Uint8Array(dataArray);
+          console.log(dataArray);
+          const buffer = Buffer.from(view);
+          console.log(typeof content);
+          const file_unique_name = Date.now() + file_name;
+          fs.writeFile(`./uploads/${file_unique_name}`, buffer, (err) => {
+            if (err) {
+              console.error('Error writing file:', err);
+            } else {
+              console.log('File written successfully.');
+            }
+          });
+          url = "http://localhost:3005/uploads/" + file_unique_name;
+          
+        } 
+
         if (communicationType === "unicast") {
           console.log("Calling Unicast Route ..");
-          this.unicast(receiver_id, content_type, userId.id, content);
+          this.unicast(receiver_id, content_type, userId.id, url ?? content);
         } else {
           console.log("Calling Multicast...");
-          this.multicast(group_id, content_type, userId.id, content);
+          this.multicast(group_id, content_type, userId.id, url ?? content);
         }
       });
     });

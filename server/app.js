@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require("mongoose");
 const cookieparser = require("cookie-parser");
 const dotenv = require("dotenv");
+const path = require("path");
 
 const http = require("http");
 
@@ -27,6 +28,7 @@ app.use(
 );
 app.use(cookieparser());
 app.use(express.json());
+app.use(express.static('uploads'));
 
 try {
   mongoose.connect(process.env.DB_CONNECT, { useNewUrlParser: true });
@@ -47,6 +49,7 @@ app.use("/api/v1/auth", auth);
 app.use("/api/v1/contacts", contact);
 app.use("/api/v1/group", group);
 app.use("/api/v1/messages", message);
+
 
 
 

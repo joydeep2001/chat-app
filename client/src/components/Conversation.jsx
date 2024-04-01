@@ -6,8 +6,6 @@ export default function Conversation({ data }) {
     appState: { userId },
   } = useContext(AppContext);
 
-
-
   return (
     <div className="conversation-container">
       {/* <div>{selectedChat}</div> */}
@@ -23,7 +21,11 @@ export default function Conversation({ data }) {
                 userId === message.sender_id ? "outbound" : "inbound"
               }`}
             >
-              {message.content}
+              {message.type === "text" ? (
+                message.content
+              ) : (
+                <img src={message.url} alt="media" />
+              )}
             </div>
           </div>
         ))}

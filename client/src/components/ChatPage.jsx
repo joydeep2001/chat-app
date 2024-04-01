@@ -23,6 +23,12 @@ export default function ChatPage() {
   const { data: api_data, fetchData: getMessages } = useAxiosWrapper();
   const { data: logoutData, fetchData: callLogout } = useAxiosWrapper();
   const { data: contactInfo, fetchData: fetchContact } = useAxiosWrapper();
+  const [message, setMessage] = useState("");
+  const [attachedFile, setAttachedFile] = useState(null);
+
+  function handleAttachment(e) {
+    setAttachedFile(e.target.files[0]);
+  }
 
   const wsRef = useRef(null);
 
@@ -62,7 +68,7 @@ export default function ChatPage() {
         //As when the user is sender_id the state is locally updated. So if we update the state again
         //the message will be shown twice
 
-        if (userId === data.sender_id) return prevState;
+        if (userId === data.sender_id && data.message_type !== "media") return prevState;
 
         let inboxId = data.group_id !== null ? data.group_id : data.sender_id;
         console.log("inbox " + inboxId);
@@ -78,12 +84,12 @@ export default function ChatPage() {
             data.user_id
         );
         newState.get(inboxId).push({
-          type: "text",
+          type: data.message_type,
           content: data.content,
           receiver_id: userId,
           //todo: the websocket should send the repsonse and from the response we should pick the timestamp
           timestamp: Date.now(), //this should not be done like this.
-          url: null,
+          url: data.url,
           sender_id: data.sender_id,
         });
         return newState;
@@ -201,14 +207,39 @@ export default function ChatPage() {
     console.log("Add Member Close clicked ..");
     setCreateMemberPopUpOpen(false);
   }
-  const [message, setMessage] = useState("");
+
+
+  function sendFile(payload) {
+    console.log("File Sending .. ");
+
+    if (!attachedFile) {
+      console.error("No file selected");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      const fileData = event.target.result;
+      const filename = attachedFile.name;
+      console.log(filename);
+      payload.content = new Uint8Array(fileData);
+      payload.file_name = filename;
+      console.log(JSON.stringify(payload));
+      wsRef.current.send(JSON.stringify(payload));
+    };
+    reader.onerror = function (event) {
+      console.error("Error reading file:", event.target.error);
+    };
+
+    reader.readAsArrayBuffer(attachedFile);
+  }
+
 
   function handleChange(e) {
     setMessage(e.target.value);
   }
 
   function handleSend() {
-    setMessage(""); //reseting the message input box
 
     //checking the first message only to make sure that the message has a null group_id or not
     //in case one message has a null group id all messages will have the same
@@ -218,20 +249,30 @@ export default function ChatPage() {
 
     const receiver_id = comType === "unicast" ? selectedChat : null;
     const group_id = comType === "multicast" ? selectedChat : null;
+    const content_type = attachedFile ? "media" : "text"; 
+    const content =  attachedFile ?? message;
 
     const payload = {
-      content: message,
+      content,
       receiver_id: receiver_id,
-      content_type: "text",
+      content_type: content_type,
       communicationType: comType,
       group_id: group_id,
     };
-    console.log(payload);
     
+    console.log(payload);
+
     setMessage(""); //reseting the message input box
+    setAttachedFile(null);
+
+    if(content_type === "media") {
+      sendFile(payload);
+      return;
+    }
 
     wsRef.current.send(JSON.stringify(payload));
     console.log("setting chat state from handleSend()");
+    
     setChats((prevState) => {
       const newState = new Map(
         JSON.parse(JSON.stringify(Array.from(prevState)))
@@ -282,7 +323,11 @@ export default function ChatPage() {
             <>
               <Conversation data={chats.get(selectedChat)} />
               <div className="msg-box-cont">
-                <input type="file" className="msg-send-file" />
+                <input
+                  onChange={handleAttachment}
+                  type="file"
+                  className="msg-send-file"
+                />
                 <input
                   value={message}
                   onChange={handleChange}
