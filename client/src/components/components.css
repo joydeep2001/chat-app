@@ -205,7 +205,7 @@ h3 {
 .msg-row-cont {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  overflow-y: scroll;
   height: 100%;
   flex: 10;
 }
