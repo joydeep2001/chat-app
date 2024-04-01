@@ -12,6 +12,7 @@ export default function Conversation({ data }) {
       <div className="msg-row-cont">
         {data.map((message) => (
           <div
+            key={`msg-row-${message.timestamp}-${message.sender_id}`}
             className={`msg-row ${
               userId === message.sender_id ? "right-align" : "left-align"
             }`}
