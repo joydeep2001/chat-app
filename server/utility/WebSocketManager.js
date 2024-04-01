@@ -19,7 +19,6 @@ class WebSocketManager {
       const connection = req.accept(null, req.origin);
       const getAuthTokenFromCookie = (cookieStr = "") => {
         const cookies = cookieStr.split(";");
-
         console.log(cookies);
         if (cookies.length === 0) throw new Error("INVALID COOKIE");
         try {

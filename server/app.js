@@ -28,7 +28,7 @@ app.use(
 );
 app.use(cookieparser());
 app.use(express.json());
-app.use(express.static('uploads'));
+app.use('/uploads', express.static(__dirname + '/uploads'));
 
 try {
   mongoose.connect(process.env.DB_CONNECT, { useNewUrlParser: true });
