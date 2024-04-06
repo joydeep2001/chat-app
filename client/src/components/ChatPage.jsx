@@ -310,7 +310,7 @@ export default function ChatPage() {
             <ChatItem
               key={messages[0]?.timestamp ?? Date.now() + "" + key}
               sender_id={key}
-              message={messages[0]}
+              message={messages[messages.length - 1]}
               onClick={onSelectedChatChange}
               active={selectedChat === key}
             />
