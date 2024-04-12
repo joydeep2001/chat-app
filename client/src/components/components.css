@@ -272,7 +272,10 @@ h3 {
 .msg-send-btn:hover {
     background-color: #0056b3; /* Darker blue on hover */
 }
-
+.msg .sender-id {
+  font-size: small;
+  color: #0056b3;
+}
 .active-chat {
     background-color: #f0f2f5;
 }

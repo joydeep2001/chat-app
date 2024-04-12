@@ -26,11 +26,13 @@ export default function Conversation({ data }) {
               userId === message.sender_id ? "right-align" : "left-align"
             }`}
           >
+            
             <div
               className={`msg ${
                 userId === message.sender_id ? "outbound" : "inbound"
               }`}
             >
+              {message.group_id !== null && <div className="sender-id">{message.sender_id}</div>}
               {message.type === "text" ? (
                 message.content
               ) : (
