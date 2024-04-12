@@ -208,6 +208,7 @@ h3 {
   overflow-y: scroll;
   height: 100%;
   flex: 10;
+  justify-content: flex-end;
 }
 .msg-box-cont {
   display: flex;
