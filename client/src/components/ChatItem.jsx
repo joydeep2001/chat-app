@@ -15,7 +15,7 @@ export default function ChatItem({ sender_id, message, onClick, active }) {
       </div>
       <div className="display-text">
         <span className="sender">{sender_id}</span>
-        <span className="last-message">{message?.content}</span>
+        <span className="last-message">{message?.type === "text"  ? message?.content : "Image"}</span>
       </div>
     </div>
   );
