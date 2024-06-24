@@ -5,7 +5,7 @@ export default function useAxiosWrapper() {
   const [data, setData] = useState(null);
   useEffect(() => console.log(data), [data])
   function fetchData(endpoint, config) {
-    const url = "http://localhost:3005/api/v1" + endpoint;
+    const url = "http://52.66.202.2/api/v1" + endpoint;
     axios(url, { ...config, withCredentials: true })
       .then((response) => {
         setData({ ...response.data, success: true });
