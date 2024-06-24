@@ -91,6 +91,7 @@ export default function ChatPage() {
           timestamp: Date.now(), //this should not be done like this.
           url: data.url,
           sender_id: data.sender_id,
+          group_id: data.group_id
         });
         return newState;
       });
