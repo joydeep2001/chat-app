@@ -81,7 +81,7 @@ class WebSocketManager {
               console.log('File written successfully.');
             }
           });
-          url = "http://localhost:3005/uploads/" + file_unique_name;
+          url = "http://52.66.202.2/uploads/" + file_unique_name;
           
         } 
 
