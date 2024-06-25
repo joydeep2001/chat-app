@@ -51,7 +51,7 @@ export default function ChatPage() {
       console.log(wsRef);
       return;
     }
-    wsRef.current = new WebSocket("ws://52.66.202.2");
+    wsRef.current = new WebSocket("ws://52.66.202.2/ws");
     /**This is for an incomming message */
 
     wsRef.current.onmessage = (message) => {
