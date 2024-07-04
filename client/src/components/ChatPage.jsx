@@ -291,7 +291,7 @@ export default function ChatPage() {
   return (
     <div className="chat-container">
       <header>
-        <h2>XChat</h2>
+        <h2>VaartalUp</h2>
         <div className="tool-box">
           <button onClick={openCreateMemberPopUp} className="btn-add contacts">
             {" "}
