@@ -22,7 +22,7 @@ const cors = require("cors");
 
 app.use(
   cors({
-    origin: ["http://52.66.202.2", "http://52.66.202.2:3000", "http://52.66.202.2:3000:80", "http://localhost:3000", "http://127.0.0.1:5500", "http://192.168.0.105:3000"],
+    origin: ["http://13.200.250.31", "http://13.200.250.31:3000", "http://52.66.202.2:3000:80", "http://localhost:3000", "http://127.0.0.1:5500", "http://192.168.0.105:3000"],
     credentials: true,
   })
 );
