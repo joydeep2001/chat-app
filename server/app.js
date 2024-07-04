@@ -49,7 +49,7 @@ app.use("/api/v1/auth", auth);
 app.use("/api/v1/contacts", contact);
 app.use("/api/v1/group", group);
 app.use("/api/v1/messages", message);
-
+app.use(express.static(path.join(__dirname, 'build')));
 
 
 
