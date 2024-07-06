@@ -2,35 +2,38 @@ import React, { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import useAxiosWrapper from "../hooks/useAxiosWrapper";
 import { AppContext } from "../context/AppContex";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 
-const LoginPage = () => {
+const SignupPage = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { data, fetchData } = useAxiosWrapper("/auth/login", {
+  const { data, fetchData } = useAxiosWrapper("/auth/signup", {
     method: "POST",
   });
   const { dispatch } = useContext(AppContext);
+  const navigate = useNavigate();
 
   const onSubmit = (data) => {
     // Here you can add your logic for authentication
     console.log("Submitted data:", data);
-    fetchData("/auth/login", {
+    fetchData("/auth/signup", {
       method: "POST",
       data: {
-        id: data.username,
+        name: data.name,
+        email: data.email,
         password: data.password,
+        user_id: data.username
       },
     });
   };
 
   useEffect(() => {
     if (data && data.success) {
-      dispatch({ type: "LOGIN_STATUS", value: true });
-      dispatch({ type: "UID", value: data.user_id });
+        alert("Account created successfully!! Now please Login to continue");
+        navigate('/');
     }
   }, [data]);
 
@@ -38,11 +41,25 @@ const LoginPage = () => {
     <div className="login-container">
       {" "}
       {/* Apply container style */}
-      <h2>Login</h2>
+      <h2>Vaartalup | Signup</h2>
       <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
-    
+        {" "}
+        {/*Name */}
         <div>
-          <label htmlFor="username">Username or email:</label>
+          <label htmlFor="username">Your Name:</label>
+          <input
+            type="text"
+            id="name"
+            {...register("name", { required: true })}
+            className="input-field" // Apply input field style
+          />
+          {errors.name && (
+            <span className="error-message">This field is required</span>
+          )}
+        </div>
+        {/* username */}
+        <div>
+          <label htmlFor="username">Create an Username:</label>
           <input
             type="text"
             id="username"
@@ -53,8 +70,9 @@ const LoginPage = () => {
             <span className="error-message">This field is required</span>
           )}
         </div>
+        {/* password */}
         <div>
-          <label htmlFor="password">Password:</label>
+          <label htmlFor="password">Set Password:</label>
           <input
             type="password"
             id="password"
@@ -65,14 +83,27 @@ const LoginPage = () => {
             <span className="error-message">This field is required</span>
           )}
         </div>
+        {/* email */}
+        <div>
+          <label htmlFor="Email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            {...register("email", { required: true })}
+            className="input-field" // Apply input field style
+          />
+          {errors.email && (
+            <span className="error-message">This field is required</span>
+          )}
+        </div>
         <button type="submit" className="login-button">
-          Login
+          Signup
         </button>{" "}
         {/* Apply button style */}
       </form>
-      <Link to="/signup">Create an Account?</Link>
+      <Link to="/">Already Have an account?</Link>
     </div>
   );
 };
 
-export default LoginPage;
+export default SignupPage;
