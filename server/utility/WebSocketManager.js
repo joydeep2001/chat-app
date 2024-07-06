@@ -19,13 +19,14 @@ class WebSocketManager {
       const connection = req.accept(null, req.origin);
       const getAuthTokenFromCookie = (cookieStr = "") => {
         const cookies = cookieStr.split(";");
+	 console.log("Websocket contructor");
         console.log(cookies);
         if (cookies.length === 0) throw new Error("INVALID COOKIE");
         try {
           const [[authTokenKey, authTokenValue]] = cookies
             .map((cookie) => cookie.trim().split("="))
             .filter(([cookieName, value]) => cookieName === "auth-token");
-
+          console.log("distruced");
           console.log(authTokenKey, authTokenValue);
           return authTokenValue;
         } catch (err) {
@@ -34,7 +35,7 @@ class WebSocketManager {
       };
 
       const authToken = getAuthTokenFromCookie(req.httpRequest.headers.cookie);
-      console.log(getAuthTokenFromCookie(req.httpRequest.headers.cookie));
+      console.log(req.httpRequest.headers.cookie);
       let userId;
       try {
         userId = jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET);

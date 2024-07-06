@@ -32,6 +32,7 @@ app.use('/uploads', express.static(__dirname + '/uploads'));
 
 try {
   mongoose.connect(process.env.DB_CONNECT, { useNewUrlParser: true });
+  console.log(process.env.DB_CONNECT);
   const connect = mongoose.connection;
   connect.on("open", () => {
     console.log("conneted to Database");
