@@ -52,10 +52,12 @@ router.post("/login", async (req, res) => {
 
 router.post("/signup", async(req, res) => {
     const user = await User.findOne({ email: req.body.email });
-    if (user)
-      return res.status(400).json({
+    if (user) {
+       res.status(400).json({
         message: "Email already exists",
       });
+      return; 
+    }
     try {
       // Create a new User
       const user = new User({
@@ -67,9 +69,10 @@ router.post("/signup", async(req, res) => {
       });
       await user.save();
       res.status(201).json({message: "user created successfully!! Login to continue"});
+      return;
       
     } catch(err) {
-        res.send(500).json({message: "Something went wrong!! Retry again"});
+        res.status(500).json({message: "Something went wrong!! Retry again"});
     }
 })
 
