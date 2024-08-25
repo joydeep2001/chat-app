@@ -51,7 +51,7 @@ export default function ChatPage() {
       console.log(wsRef);
       return;
     }
-    wsRef.current = new WebSocket(`ws://${process.env.REACT_APP_BACKEND_URL}/ws`);
+    wsRef.current = new WebSocket(`wss://${process.env.REACT_APP_BACKEND_URL}/ws`);
     /**This is for an incomming message */
 
     wsRef.current.onmessage = (message) => {
