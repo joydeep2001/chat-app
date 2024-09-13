@@ -18,7 +18,7 @@ const LoginPage = () => {
   const onSubmit = (data) => {
     // Here you can add your logic for authentication
     console.log("Submitted data:", data);
-    fetchData("/auth/login", {
+    fetchData(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {
       method: "POST",
       data: {
         id: data.username,

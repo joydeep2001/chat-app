@@ -37,7 +37,7 @@ export default function ChatPage() {
     setSelectedChat(sender_id);
   }
   function logout() {
-    callLogout("/auth/logout", {
+    callLogout(`${process.env.REACT_APP_BACKEND_URL}/auth/logout`, {
       method: "GET",
     });
   }
@@ -51,7 +51,7 @@ export default function ChatPage() {
       console.log(wsRef);
       return;
     }
-    wsRef.current = new WebSocket(`wss://${process.env.REACT_APP_BACKEND_URL}/ws`);
+    wsRef.current = new WebSocket(`${process.env.REACT_APP_WS_URL}/ws`);
     /**This is for an incomming message */
 
     wsRef.current.onmessage = (message) => {
@@ -103,7 +103,7 @@ export default function ChatPage() {
   }, []);
 
   useEffect(() => {
-    getMessages("/messages", {
+    getMessages(`${process.env.REACT_APP_BACKEND_URL}/messages`, {
       method: "GET",
     });
   }, []);

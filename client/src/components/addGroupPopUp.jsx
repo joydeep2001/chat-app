@@ -20,7 +20,7 @@ export default function GroupCreatePopUp({ onClose, createGroup }) {
         group_name: groupName,
         members
     }
-    addGroup("/group/", {
+    addGroup(`${process.env.REACT_APP_BACKEND_URL}/group/`, {
         method: "POST",
         data: payload
     });
