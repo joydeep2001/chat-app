@@ -25,11 +25,11 @@ const reducer = (state, action) => {
 export default function AppContextProvider({ children }) {
   const [appState, dispatch] = useReducer(reducer, initialAppState);
   const { data, fetchData } = useAxiosWrapper();
-
+  useEffect(() => console.log(process.env.REACT_APP_BACKEND_URL));
   /*This useEffect will get the status of login state*/
   useEffect(
     () =>
-      fetchData("/auth/status", {
+      fetchData(`${process.env.REACT_APP_BACKEND_URL}/auth/status`, {
         method: "GET",
       }),
     []

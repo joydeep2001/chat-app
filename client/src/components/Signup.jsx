@@ -10,7 +10,7 @@ const SignupPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { data, fetchData } = useAxiosWrapper("/auth/signup", {
+  const { data, fetchData } = useAxiosWrapper(`${process.env.REACT_APP_BACKEND_URL}/auth/signup`, {
     method: "POST",
   });
   const { dispatch } = useContext(AppContext);
@@ -19,7 +19,7 @@ const SignupPage = () => {
   const onSubmit = (data) => {
     // Here you can add your logic for authentication
     console.log("Submitted data:", data);
-    fetchData("/auth/signup", {
+    fetchData(`${process.env.REACT_APP_BACKEND_URL}/auth/signup`, {
       method: "POST",
       data: {
         name: data.name,
