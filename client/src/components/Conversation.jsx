@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { AppContext } from "../context/AppContex";
 
 export default function Conversation({ data }) {
@@ -15,10 +15,22 @@ export default function Conversation({ data }) {
     return dateTime.toLocaleString();
 
   }
+  const containerRef = useRef();
+
+    //for scrolling to bottom on load
+    useEffect(() => {
+      containerRef.current.scrollTo({
+        top: containerRef.current.scrollTopMax,
+        behavior: "smooth",
+      });
+      console.log("Scrolled");
+    }, [data]);
+  
+
   return (
     <div className="conversation-container">
       {/* <div>{selectedChat}</div> */}
-      <div className="msg-row-cont">
+      <div ref={containerRef} className="msg-row-cont">
         {data.map((message) => (
           <div
             key={`msg-row-${message.timestamp}-${message.sender_id}`}
