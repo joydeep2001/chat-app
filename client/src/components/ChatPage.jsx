@@ -5,10 +5,11 @@ import Conversation from "./Conversation";
 import "./components.css";
 import { AppContext } from "../context/AppContex";
 import useAxiosWrapper from "../hooks/useAxiosWrapper";
-import { AiOutlineLogout } from "react-icons/ai";
+import { FaUserAlt } from "react-icons/fa";
 
 import GroupCreatePopUp from "./addGroupPopUp.jsx";
 import AddMemberPopUp from "./addContactPopUp";
+import ProfilePopup from "./profile_popup.jsx";
 const api_data = [];
 
 export default function ChatPage() {
@@ -25,6 +26,13 @@ export default function ChatPage() {
   const { data: contactInfo, fetchData: fetchContact } = useAxiosWrapper();
   const [message, setMessage] = useState("");
   const [attachedFile, setAttachedFile] = useState(null);
+  
+  const [isVisibleProfilePopup, setProfilePopupVisibility] = useState(false);
+
+  function togglePopup() {
+    setProfilePopupVisibility((prev) => !prev);
+  }
+
 
   function handleAttachment(e) {
     setAttachedFile(e.target.files[0]);
@@ -300,9 +308,12 @@ export default function ChatPage() {
           <button onClick={openAddGroupPopup} className="btn-add group">
             Create Group
           </button>
-          <button onClick={logout} className="btn-logout">
-            <AiOutlineLogout /> Logout
-          </button>
+          <div onClick={togglePopup} className="profile-icon">
+            <FaUserAlt color="#000" />
+          </div>
+          {isVisibleProfilePopup && (
+            <ProfilePopup userId={userId} logout={logout} />
+          )}
         </div>
       </header>
       <main>
