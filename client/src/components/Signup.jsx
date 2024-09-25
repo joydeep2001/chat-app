@@ -41,7 +41,7 @@ const SignupPage = () => {
     <div className="login-container">
       {" "}
       {/* Apply container style */}
-      <h2>Vaartalup | Signup</h2>
+      <h2>VartaalUp | Signup</h2>
       <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
         {" "}
         {/*Name */}

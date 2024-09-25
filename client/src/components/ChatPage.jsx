@@ -299,7 +299,7 @@ export default function ChatPage() {
   return (
     <div className="chat-container">
       <header>
-        <h2>VaartalUp</h2>
+        <h2>VartaalUp</h2>
         <div className="tool-box">
           <button onClick={openCreateMemberPopUp} className="btn-add contacts">
             {" "}
@@ -330,7 +330,7 @@ export default function ChatPage() {
         </div>
         <div className="right">
           {!selectedChat ? (
-            <h3>Welcome to XChat</h3>
+            <h3>Welcome to VartaalUp</h3>
           ) : (
             <>
               <Conversation data={chats.get(selectedChat)} />
@@ -344,7 +344,7 @@ export default function ChatPage() {
                   value={message}
                   onChange={handleChange}
                   className="message-box"
-                  placeholder="Type Your XChat here.."
+                  placeholder="Type Your message here.."
                   type="text"
                 />
                 <button onClick={handleSend} className="msg-send-btn">
