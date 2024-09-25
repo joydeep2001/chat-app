@@ -7,7 +7,7 @@ export default function GroupCreatePopUp({ onClose, fetchContact }) {
 
   async function onSubmit(data) {
     const { memberId } = data;
-      fetchContact(`/contacts/${memberId}`, {method: "GET"});
+      fetchContact(`${process.env.REACT_APP_BACKEND_URL}/contacts/${memberId}`, {method: "GET"});
       onClose();
    
   }
